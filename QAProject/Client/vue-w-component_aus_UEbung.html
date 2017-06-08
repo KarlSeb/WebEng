@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div id="app">
+            <form @submit.prevent="login" v-if="!loggedIn" style="float:right">
+                <input type="text" v-model="user"/>
+                <input type="password" v-model="pwd"/>
+                <input type="submit" />
+            </form>
+            <input type="submit" value="logout" @click.prevent="logout" v-if="loggedIn"  style="float:right"/>
+       
+            <input placeholder="What needs to be done?" v-model="newTodo" @keyup.enter="addTodo"/>
+        
+            <ul>
+                <todo v-for="t in todos" :to="t" :key="t.pid" :loggedin="loggedIn" @removedtodo="getTodos"></todo>
+            </ul>
+        </div>
+    <template id="tpl-todo">
+        <li>{{to.content | uppercase}} <a href="" v-if="loggedin" @click.prevent="removeTodo(to)">delete</a></li>
+    </template>
+        <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script src="https://unpkg.com/vue"></script>
+        <script>
+            Vue.filter('uppercase', function(input){
+                return input.toUpperCase();
+            });
+            Vue.component('todo',{
+                props:['to','loggedin'],
+                template:'#tpl-todo',
+                methods:{
+                    removeTodo:function(todo){
+                        $.ajax({
+                            url:'http://localhost:8080/todos/' + todo.pid,
+                            type:'DELETE',
+                            xhrFields:{withCredentials:true},
+                            success:function(){
+                                this.$emit('removedtodo');
+                            }.bind(this)
+                        });
+                    }
+                }
+            });
+            var app = new Vue({
+                el : '#app',
+                data:{
+                    todos:[],
+                    newTodo:'',
+                    user:'',
+                    pwd:'',
+                    loggedIn:false
+                },
+                created:function(){
+                    this.getTodos();
+                    $.ajax({
+                        url:'http://localhost:8080/todos/-1',
+                        type:'DELETE',
+                        xhrFields:{withCredentials:true},
+                        complete:function(xhr){
+                            if(xhr.status !== 401) {
+                                app.loggedIn = true;
+                            }
+                        }
+                    });
+                },
+                methods:{
+                    login:function(){
+                        $.ajax({
+                            url:'http://localhost:8080/todos',
+                            type:'HEAD',
+                            xhrFields:{withCredentials:true},
+                            headers:{
+                                "Authorization":"Basic " + btoa(this.user + ":" + this.pwd)
+                            },
+                            success:function(){
+                                this.loggedIn = true;
+                            }.bind(this)
+                        });
+                    },
+                    logout:function(){
+                        $.ajax({
+                            url:'http://localhost:8080/logout',
+                            type:'POST',
+                            xhrFields:{withCredentials:true},
+                            success:function(){
+                                app.loggedIn = false;
+                            }
+                        });
+                    },
+                    addTodo:function(){
+                        $.ajax({
+                            url:'http://localhost:8080/todos',
+                            type:'PUT',
+                            xhrFields:{withCredentials:true},
+                            data:JSON.stringify({content:this.newTodo}),
+                            contentType:'application/json',
+                            success:function(){
+                                app.newTodo = '';
+                                app.getTodos();
+                            }
+                        });
+                    },
+                    getTodos:function(){
+                        $.getJSON('http://localhost:8080/todos', function(res){
+                            app.todos = res;
+                        });
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
