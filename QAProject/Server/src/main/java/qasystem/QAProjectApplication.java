@@ -6,19 +6,19 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import qasystem.entities.User;
-import qasystem.repositories.UserRepository;
+import qasystem.persistence.entities.User;
+import qasystem.persistence.repositories.UserRepository;
 
 /**
  * Startet das System per Spring Boot.
  */
 @SpringBootApplication
-public class Application {
+public class QAProjectApplication {
 
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
+    private static final Logger log = LoggerFactory.getLogger(QAProjectApplication.class);
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class);
+        SpringApplication.run(QAProjectApplication.class);
     }
 
     /**

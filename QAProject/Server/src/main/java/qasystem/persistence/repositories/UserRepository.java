@@ -1,7 +1,7 @@
-package qasystem.repositories;
+package qasystem.persistence.repositories;
 
 import org.springframework.data.repository.CrudRepository;
-import qasystem.entities.User;
+import qasystem.persistence.entities.User;
 
 /**
  * Repository für die User die im System registriert sind
