@@ -1,9 +1,7 @@
 package qasystem.persistence.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 /**
  * Kapselt die Daten eines Benutzers für die Java Persistence API
@@ -16,6 +14,9 @@ public class User {
     private long id;
     private String username;
     private String password;
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
+    @JoinTable(joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
 
     protected User(){}
 

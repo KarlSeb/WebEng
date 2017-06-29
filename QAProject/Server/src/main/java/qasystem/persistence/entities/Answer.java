@@ -1,9 +1,6 @@
 package qasystem.persistence.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Kapselt die Daten einer Antwort für die Java Persistence API
@@ -14,12 +11,16 @@ public class Answer {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="question.id")
     private Question parentQuestion;
+
     private String text;
 
     protected Answer(){}
 
-    public Answer(Question parentQuestion, String text) {
+    public Answer(String text) {
         this.parentQuestion = parentQuestion;
         this.text = text;
     }

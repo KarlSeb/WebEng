@@ -1,9 +1,6 @@
 package qasystem.persistence.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -16,8 +13,13 @@ public class Question {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
+
     private String title;
+
     private String text;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
+            targetEntity=Answer.class, mappedBy="parentQuestion")
     private Collection<Answer> answers = new LinkedList<>();
 
     protected Question(){}
