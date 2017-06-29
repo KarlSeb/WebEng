@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import qasystem.persistence.entities.User;
 import qasystem.persistence.repositories.UserRepository;
+import qasystem.web.controller.GenericController;
+import qasystem.web.dtos.UserDTO;
 
 /**
  * Startet das System per Spring Boot.
@@ -28,7 +30,7 @@ public class QAProjectApplication {
      * @param repository UserRepository in das die Daten geschrieben werden.
      */
     @Bean
-    public CommandLineRunner demo(UserRepository repository) {
+    public CommandLineRunner demo(UserRepository repository, GenericController genericController) {
         return (args) -> {
             // save a couple of Users
             repository.save(new User("Jack", "Bauer"));
@@ -57,6 +59,23 @@ public class QAProjectApplication {
             log.info("--------------------------------------------");
             User jack = repository.findByUsername("Jack");
             log.info(jack.toString());
+            log.info("");
+
+            // test User registration
+            log.info("Register new User with registerNewUser()");
+            log.info("--------------------------------------------");
+            UserDTO newUser = new UserDTO();
+            newUser.setUserName("Max");
+            newUser.setPassword("pass");
+            genericController.registerNewUser(newUser);
+            log.info("Registration done!");
+            log.info("");
+
+            //Fetch new registered User
+            log.info("User found with findByUsername('Max'):");
+            log.info("--------------------------------------------");
+            User max = repository.findByUsername("Max");
+            log.info(max.toString());
             log.info("");
         };
     }

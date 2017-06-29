@@ -1,7 +1,9 @@
 package qasystem.web.controller;
 
-/**
- * Created by a on 29.06.2017.
- */
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(value = "/users")
 public class UserController {
 }
