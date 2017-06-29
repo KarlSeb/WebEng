@@ -1,6 +1,8 @@
 package qasystem.persistence.entities;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Set;
 
 /**
@@ -12,12 +14,17 @@ public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
+
     private String username;
+
     private String password;
+
     @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+//    private Collection<Answer> answers = new LinkedList<>();
+//    private Collection<Question> questions = new LinkedList<>();
     protected User(){}
 
     public User(String username, String password) {

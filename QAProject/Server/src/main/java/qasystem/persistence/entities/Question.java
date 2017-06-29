@@ -2,6 +2,7 @@ package qasystem.persistence.entities;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 
 /**
@@ -18,8 +19,13 @@ public class Question {
 
     private String text;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL,
-            targetEntity=Answer.class, mappedBy="parentQuestion")
+    private GregorianCalendar date;
+
+    private boolean answered;
+
+    //private User user;
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity=Answer.class, mappedBy="parentQuestion")
     private Collection<Answer> answers = new LinkedList<>();
 
     protected Question(){}
@@ -27,6 +33,8 @@ public class Question {
     public Question(String title, String text) {
         this.title = title;
         this.text = text;
+        date = new GregorianCalendar();
+        answered = false;
     }
 
     @Override
@@ -66,5 +74,21 @@ public class Question {
 
     public void setAnswers(Collection<Answer> answers) {
         this.answers = answers;
+    }
+
+    public GregorianCalendar getDate() {
+        return date;
+    }
+
+    public void setDate(GregorianCalendar date) {
+        this.date = date;
+    }
+
+    public boolean isAnswered() {
+        return answered;
+    }
+
+    public void setAnswered(boolean answered) {
+        this.answered = answered;
     }
 }

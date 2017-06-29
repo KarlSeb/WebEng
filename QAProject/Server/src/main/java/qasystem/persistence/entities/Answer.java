@@ -1,6 +1,7 @@
 package qasystem.persistence.entities;
 
 import javax.persistence.*;
+import java.util.GregorianCalendar;
 
 /**
  * Kapselt die Daten einer Antwort für die Java Persistence API
@@ -18,11 +19,19 @@ public class Answer {
 
     private String text;
 
+    private GregorianCalendar date;
+
+    private boolean accepted;
+
+    //private User user;
+
     protected Answer(){}
 
-    public Answer(String text) {
+    public Answer(Question parentQuestion, String text) {
         this.parentQuestion = parentQuestion;
         this.text = text;
+        date = new GregorianCalendar();
+        accepted = false;
     }
 
     @Override
@@ -54,5 +63,21 @@ public class Answer {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public GregorianCalendar getDate() {
+        return date;
+    }
+
+    public void setDate(GregorianCalendar date) {
+        this.date = date;
+    }
+
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
     }
 }
