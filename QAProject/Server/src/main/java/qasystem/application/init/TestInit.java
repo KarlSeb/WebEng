@@ -11,6 +11,9 @@ import qasystem.persistence.repositories.UserRepository;
 import qasystem.web.controller.GenericController;
 import qasystem.web.dtos.UserDTO;
 
+/**
+ * Beim Start der Applikation wird die run()-Methode dieser Klasse aufgerufen. Diese Klasse dient dabei Testzwecken.
+ */
 @Component
 public class TestInit implements CommandLineRunner{
     private final UserRepository repository;

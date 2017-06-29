@@ -4,6 +4,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * DTO zum Kapseln der Daten eines Benutzers.
+ */
 public class UserDTO {
     @NotNull
     @NotEmpty

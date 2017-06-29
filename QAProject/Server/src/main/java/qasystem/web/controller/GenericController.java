@@ -28,7 +28,7 @@ public class GenericController {
      * @param accountDto DTO, das alle Informationen des neu angelegten Benutzers beinhaltet.
      */
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public void registerNewUser(@Valid UserDTO accountDto){
         registrationService.registerNewUser(accountDto);
     }
