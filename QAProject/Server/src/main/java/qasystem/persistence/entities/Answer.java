@@ -23,15 +23,18 @@ public class Answer {
 
     private boolean accepted;
 
-    //private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user.id")
+    private User user;
 
     protected Answer(){}
 
-    public Answer(Question parentQuestion, String text) {
+    public Answer(Question parentQuestion, String text, User user) {
         this.parentQuestion = parentQuestion;
         this.text = text;
         date = new GregorianCalendar();
         accepted = false;
+        this.user = user;
     }
 
     @Override
@@ -79,5 +82,13 @@ public class Answer {
 
     public void setAccepted(boolean accepted) {
         this.accepted = accepted;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

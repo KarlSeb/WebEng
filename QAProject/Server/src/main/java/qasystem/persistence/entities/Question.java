@@ -23,18 +23,21 @@ public class Question {
 
     private boolean answered;
 
-    //private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user.id")
+    private User user;
 
     @OneToMany(fetch = FetchType.LAZY, targetEntity=Answer.class, mappedBy="parentQuestion")
     private Collection<Answer> answers = new LinkedList<>();
 
     protected Question(){}
 
-    public Question(String title, String text) {
+    public Question(String title, String text, User user) {
         this.title = title;
         this.text = text;
-        date = new GregorianCalendar();
-        answered = false;
+        this.date = new GregorianCalendar();
+        this.answered = false;
+        this.user = user;
     }
 
     @Override
@@ -90,5 +93,13 @@ public class Question {
 
     public void setAnswered(boolean answered) {
         this.answered = answered;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

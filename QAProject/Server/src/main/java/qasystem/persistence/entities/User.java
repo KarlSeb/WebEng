@@ -23,8 +23,12 @@ public class User {
     @JoinTable(joinColumns = @JoinColumn(name = "user_id"),inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
-//    private Collection<Answer> answers = new LinkedList<>();
-//    private Collection<Question> questions = new LinkedList<>();
+    @OneToMany(fetch = FetchType.LAZY, targetEntity=Answer.class, mappedBy="user")
+    private Collection<Answer> answers = new LinkedList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, targetEntity=Question.class, mappedBy="user")
+    private Collection<Question> questions = new LinkedList<>();
+
     protected User(){}
 
     public User(String username, String password) {
