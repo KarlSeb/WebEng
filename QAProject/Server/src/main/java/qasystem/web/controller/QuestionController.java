@@ -9,6 +9,7 @@ import qasystem.application.service.QuestionService;
 import qasystem.web.dtos.AnswerDTO;
 import qasystem.web.dtos.QuestionDTO;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -89,11 +90,11 @@ public class QuestionController {
      */
     @PostMapping(value = "/newQuestion")
     @ResponseStatus(HttpStatus.CREATED)
-    public QuestionDTO createQuestion(){
-        return questionService.createQuestion();
+    public QuestionDTO createQuestion(@Valid QuestionDTO question){
+        return questionService.createQuestion(question);
     }
     //=======PUT-MAPPING=======
-    //TODO Methoden zum bearbeiten bereits erstelter Frage und Antworten, wenn noch Zeit ist.
+    //TODO Methoden zum bearbeiten bereits erstellter Frage und Antworten, wenn noch Zeit ist.
 
     /**
      * Identifiziert die entsprechende Antwort über die eindeutige aId für die Antwort und setzt das entsprechende Flag.
