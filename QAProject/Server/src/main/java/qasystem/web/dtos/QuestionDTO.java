@@ -7,6 +7,9 @@ import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 
+/**
+ * Kapselt die Daten für eine Frage.
+ */
 public class QuestionDTO {
     private long id;
 
@@ -22,9 +25,11 @@ public class QuestionDTO {
 
     private boolean answered;
 
-    private UserDTO user;
+    @NotNull
+    @NotEmpty
+    private long userId;
 
-    private Collection<AnswerDTO> answers = new LinkedList<>();
+    private Collection<Long> answerIds = new LinkedList<>();
 
 
     public long getId() {
@@ -67,19 +72,19 @@ public class QuestionDTO {
         this.answered = answered;
     }
 
-    public UserDTO getUser() {
-        return user;
+    public long getUser() {
+        return userId;
     }
 
-    public void setUser(UserDTO user) {
-        this.user = user;
+    public void setUser(long userId) {
+        this.userId = userId;
     }
 
-    public Collection<AnswerDTO> getAnswers() {
-        return answers;
+    public Collection<Long> getAnswers() {
+        return answerIds;
     }
 
-    public void setAnswers(Collection<AnswerDTO> answers) {
-        this.answers = answers;
+    public void setAnswers(Collection<Long> answerIds) {
+        this.answerIds = answerIds;
     }
 }
