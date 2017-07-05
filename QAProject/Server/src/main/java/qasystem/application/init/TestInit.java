@@ -6,10 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import qasystem.QAProjectApplication;
+import qasystem.persistence.entities.Question;
 import qasystem.persistence.entities.User;
+import qasystem.persistence.repositories.QuestionRepository;
 import qasystem.persistence.repositories.UserRepository;
 import qasystem.web.controller.GenericController;
 import qasystem.web.dtos.UserDTO;
+
+import java.util.Collection;
 
 /**
  * Beim Start der Applikation wird die run()-Methode dieser Klasse aufgerufen. Diese Klasse dient dabei Testzwecken.
@@ -17,13 +21,15 @@ import qasystem.web.dtos.UserDTO;
 @Component
 public class TestInit implements CommandLineRunner{
     private final UserRepository repository;
+    private final QuestionRepository qrepo;
     private final GenericController genericController;
     private static final Logger log = LoggerFactory.getLogger(QAProjectApplication.class);
 
     @Autowired
-    public TestInit(UserRepository repository, GenericController genericController) {
+    public TestInit(UserRepository repository, GenericController genericController, QuestionRepository qrepo) {
         this.repository = repository;
         this.genericController = genericController;
+        this.qrepo = qrepo;
     }
 
     /**
@@ -77,5 +83,22 @@ public class TestInit implements CommandLineRunner{
         User max = repository.findByUsername("Max");
         log.info(max.toString());
         log.info("");
+
+        qrepo.save(new Question("title1", "question1?", jack));
+        Collection<Question> unanswered = qrepo.findAllByAnsweredNot();
+        log.info("All unanswered questions");
+        for (Question q: unanswered) {
+            log.info(q.toString());
+        }
+        log.info("Done \n");
+        qrepo.updateAnswered(1L,true);
+        log.info("question set to answered");
+        Collection<Question> unanswered2 = qrepo.findAllByAnsweredNot();
+        log.info("Now all unanswered questions");
+        for (Question q: unanswered2) {
+            log.info(q.toString());
+        }
+        log.info("Done \n");
+
     }
 }

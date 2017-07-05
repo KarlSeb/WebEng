@@ -52,3 +52,7 @@ buildNumber.properties
 hs_err_pid*
 QAProject/.idea/**
 QAProject/Server/Server.iml.rej
+.idea/vcs.xml
+.idea/modules.xml
+.idea/misc.xml
+.idea/WebEng.iml
