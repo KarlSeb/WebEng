@@ -120,4 +120,14 @@ public class QuestionService {
         question.setAnswers(answerIds);
         return question;
     }
+
+    void setQuestionToAnswered(String id, boolean answered) {
+        Long lQuestionId = Long.getLong(id);
+        questionRepository.updateAnswered(lQuestionId, answered);
+    }
+
+    Question getQuestionById(String id) {
+        Long lQuestionId = Long.getLong(id);
+        return questionRepository.findOne(lQuestionId);
+    }
 }

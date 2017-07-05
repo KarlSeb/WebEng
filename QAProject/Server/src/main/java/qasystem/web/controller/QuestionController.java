@@ -79,8 +79,8 @@ public class QuestionController {
      */
     @PostMapping(value = "/{id:[1-9]+}/answers/newAnswer")
     @ResponseStatus(HttpStatus.CREATED)
-    public AnswerDTO answerQuestion(@PathVariable("id") String id){
-        return answerService.answerQuestion(id);
+    public AnswerDTO answerQuestion(@PathVariable("id") String id, @Valid AnswerDTO answer){
+        return answerService.answerQuestion(id, answer);
     }
 
     /**
