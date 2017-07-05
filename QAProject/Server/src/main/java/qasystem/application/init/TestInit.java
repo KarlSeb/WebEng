@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import qasystem.QAProjectApplication;
+import qasystem.persistence.entities.Answer;
 import qasystem.persistence.entities.Question;
 import qasystem.persistence.entities.User;
+import qasystem.persistence.repositories.AnswerRepository;
 import qasystem.persistence.repositories.QuestionRepository;
 import qasystem.persistence.repositories.UserRepository;
 import qasystem.web.controller.GenericController;
@@ -22,14 +24,16 @@ import java.util.Collection;
 public class TestInit implements CommandLineRunner{
     private final UserRepository repository;
     private final QuestionRepository qrepo;
+    private final AnswerRepository arepo;
     private final GenericController genericController;
     private static final Logger log = LoggerFactory.getLogger(QAProjectApplication.class);
 
     @Autowired
-    public TestInit(UserRepository repository, GenericController genericController, QuestionRepository qrepo) {
+    public TestInit(UserRepository repository, GenericController genericController, QuestionRepository qrepo, AnswerRepository arepo) {
         this.repository = repository;
         this.genericController = genericController;
         this.qrepo = qrepo;
+        this.arepo = arepo;
     }
 
     /**
@@ -84,21 +88,46 @@ public class TestInit implements CommandLineRunner{
         log.info(max.toString());
         log.info("");
 
-        qrepo.save(new Question("title1", "question1?", jack));
+        User bob = new User("bob", "bobspw");
+        repository.save(bob);
+        User fred = new User("fred", "fredspw");
+        repository.save(fred);
+        User luke = new User("luke", "lukespw");
+        repository.save(luke);
+        Question q1 = new Question("title1", "question1?", jack);
+        qrepo.save(q1);
+        Question q2 = new Question("title2", "question2?", bob);
+        qrepo.save(q2);
+        Question q3 = new Question("title3", "question3?", bob);
+        qrepo.save(q3);
+
         Collection<Question> unanswered = qrepo.findAllByAnsweredNot();
         log.info("All unanswered questions");
         for (Question q: unanswered) {
             log.info(q.toString());
         }
         log.info("Done \n");
-        qrepo.updateAnswered(1L,true);
-        log.info("question set to answered");
+        qrepo.updateAnswered(q1.getId(),true);
+        log.info("question1 set to answered");
         Collection<Question> unanswered2 = qrepo.findAllByAnsweredNot();
         log.info("Now all unanswered questions");
         for (Question q: unanswered2) {
             log.info(q.toString());
         }
         log.info("Done \n");
+        log.info("Creating answers to q1, q2 and q3\n");
+        Answer a1= new Answer(q1, "bobs answer to q1!", bob);
+        arepo.save(a1);
+        Answer a2= new Answer(q2, "lukes answer to q2!", luke);
+        arepo.save(a2);
+        Answer a3= new Answer(q3, "bobs answer to q3!", bob);
+        arepo.save(a3);
 
+        log.info("All questions bob has answered:");
+        Collection<Question> answeredByBob = qrepo.findAllByAnswersContainsUserId(bob.getId());
+        for (Question q: answeredByBob) {
+            log.info(q.toString());
+        }
+        log.info("Done\n");
     }
 }
