@@ -37,14 +37,22 @@ public class QuestionService {
         return convertListToDTOs(all);
     }
 
-    //TODO
+    /**
+     * Liefert eine Liste aller Fragen, die noch als unbeantwortet gelten.
+     *
+     * @return Liste aller Fragen, die keine akzeptierte Antwort besitzen
+     */
     public List<QuestionDTO> getAllUnansweredQuestions() {
-        return null;
+        return convertListToDTOs(questionRepository.findAllByAnsweredNot());
     }
 
-    //TODO
+    /**
+     * Liefert eine Liste aller Fragen, die noch keine Antwort haben.
+     *
+      * @return Liste aller Fragen, denen noch keine Antwort zugeordnet ist.
+     */
     public List<QuestionDTO> getAllUnsolvedQuestions() {
-        return null;
+        return convertListToDTOs(questionRepository.findAllByNoReply());
     }
 
     /**
@@ -87,7 +95,7 @@ public class QuestionService {
      * @param questions Liste der zu konvertierenden Fragen
      * @return Liste an QuestionDTOs.
      */
-    private List<QuestionDTO> convertListToDTOs(List<Question> questions) {
+     List<QuestionDTO> convertListToDTOs(Collection<Question> questions) {
         List<QuestionDTO> questionDTOs = new LinkedList<>();
         for(Question q: questions){
             QuestionDTO newDTO = new QuestionDTO();
@@ -129,5 +137,10 @@ public class QuestionService {
     Question getQuestionById(String id) {
         Long lQuestionId = Long.getLong(id);
         return questionRepository.findOne(lQuestionId);
+    }
+
+    Collection<Question> findAllByUserId(String id) {
+         Long lUserId = Long.getLong(id);
+         return questionRepository.findAllByUserId(lUserId);
     }
 }

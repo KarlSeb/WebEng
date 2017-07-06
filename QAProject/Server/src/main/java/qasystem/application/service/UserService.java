@@ -6,7 +6,6 @@ import qasystem.persistence.entities.User;
 import qasystem.persistence.repositories.UserRepository;
 import qasystem.web.dtos.AnswerDTO;
 import qasystem.web.dtos.QuestionDTO;
-import qasystem.web.dtos.UserDTO;
 
 import java.util.List;
 
@@ -14,6 +13,10 @@ import java.util.List;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private QuestionService questionService;
+    @Autowired
+    private AnswerService answerService;
 
     /**
      * Holt den Benutzer mit der entsprechenden ID aus der Datenbank und gibt diesen zurück.
@@ -25,13 +28,23 @@ public class UserService {
         return userRepository.findOne(id);
     }
 
-    //TODO
+    /**
+     * Liefert eine Liste aller Fragen, die von einem bestimmten Nutzer gestellt wurden.
+     *
+     * @param id Eindeutiger Identifikator eines Benutzers
+     * @return Liste aller Fragen, die von einem Nutzer gestellt wurden, als DTOs
+     */
     public List<QuestionDTO> getAllQuestionsOfUser(String id) {
-        return null;
+        return questionService.convertListToDTOs(questionService.findAllByUserId(id));
     }
 
-    //TODO
+    /**
+     * Liefer eine Liste aller Antworten die ein Benutzer gegeben hat
+     *
+     * @param id Eindeutiger Identifikator des Benutzers
+     * @return Liste aller Antworten, die ein bestimmeter Nutzer gegeben hat, als DTOs
+     */
     public List<AnswerDTO> getAllAnswersOfUser(String id) {
-        return null;
+        return answerService.convertListToDTOs(answerService.getAllAnswersByUserId(id));
     }
 }

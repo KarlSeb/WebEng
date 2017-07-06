@@ -9,6 +9,7 @@ import qasystem.persistence.repositories.AnswerRepository;
 import qasystem.web.dtos.AnswerDTO;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -16,7 +17,7 @@ public class AnswerService {
     @Autowired
     private AnswerRepository answerRepository;
     @Autowired
-    private QuestionService questionService;
+    private answerservice answerservice;
     @Autowired
     private UserService userService;
 
@@ -33,7 +34,7 @@ public class AnswerService {
      * @return AnswerDTO, das die zusätzlichen, automatisch generierten Daten enthält.
      */
     public AnswerDTO answerQuestion(String id, AnswerDTO answerDTO) {
-        Question parentQuestion = questionService.getQuestionById(id);
+        Question parentQuestion = answerservice.getQuestionById(id);
         User u = userService.getUserById(answerDTO.getUserId());
         Answer newAnswer = new Answer(parentQuestion, answerDTO.getText(), u);
         return convertAnswerToDTO(answerRepository.save(newAnswer));
@@ -47,7 +48,7 @@ public class AnswerService {
      * @param aId EIndeutiger Identifikator der Antwort
      */
     public void acceptAnswer(String id, String aId) {
-        questionService.setQuestionToAnswered(id, true);
+        answerservice.setQuestionToAnswered(id, true);
         Long lAnswerId = Long.getLong(aId);
         answerRepository.updateAccepted(lAnswerId, true);
     }
@@ -64,9 +65,8 @@ public class AnswerService {
         //TODO Benutzer überprüfen
         Long lAnswerId = Long.getLong(aId);
         Answer toDelete = answerRepository.findOne(lAnswerId);
-        //TODO Sollte das gemacht werden?
         if (toDelete.isAccepted()){
-            questionService.setQuestionToAnswered(id, false);
+            answerservice.setQuestionToAnswered(id, false);
         }
         answerRepository.delete(toDelete);
     }
@@ -97,5 +97,26 @@ public class AnswerService {
      */
      void deleteAnswerList(Collection<Answer> answersToQuestion) {
         answerRepository.delete(answersToQuestion);
+    }
+
+    List<AnswerDTO> convertListToDTOs(Collection<Answer> answers) {
+        List<AnswerDTO> answerDTOs = new LinkedList<>();
+        for(Answer a: answers){
+            AnswerDTO newDTO = new AnswerDTO();
+            newDTO.setId(a.getId());
+            newDTO.setText(a.getText());
+            newDTO.setUserId(a.getUser().getId());
+            newDTO.setParentQuestionId(a.getParentQuestion().getId());
+            newDTO.setDate(a.getDate());
+            newDTO.setAccepted(a.isAccepted());
+            answerDTOs.add(newDTO);
+        }
+        return answerDTOs;
+    }
+
+    //TODO
+    Collection<Answer> getAllAnswersByUserId(String id) {
+         Long lUserId = Long.getLong(id);
+         return null;
     }
 }
