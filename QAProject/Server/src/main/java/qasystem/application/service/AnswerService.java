@@ -17,7 +17,7 @@ public class AnswerService {
     @Autowired
     private AnswerRepository answerRepository;
     @Autowired
-    private answerservice answerservice;
+    private QuestionService questionService;
     @Autowired
     private UserService userService;
 
@@ -34,7 +34,7 @@ public class AnswerService {
      * @return AnswerDTO, das die zusätzlichen, automatisch generierten Daten enthält.
      */
     public AnswerDTO answerQuestion(String id, AnswerDTO answerDTO) {
-        Question parentQuestion = answerservice.getQuestionById(id);
+        Question parentQuestion = questionService.getQuestionById(id);
         User u = userService.getUserById(answerDTO.getUserId());
         Answer newAnswer = new Answer(parentQuestion, answerDTO.getText(), u);
         return convertAnswerToDTO(answerRepository.save(newAnswer));
@@ -48,7 +48,7 @@ public class AnswerService {
      * @param aId EIndeutiger Identifikator der Antwort
      */
     public void acceptAnswer(String id, String aId) {
-        answerservice.setQuestionToAnswered(id, true);
+        questionService.setQuestionToAnswered(id, true);
         Long lAnswerId = Long.getLong(aId);
         answerRepository.updateAccepted(lAnswerId, true);
     }
@@ -66,7 +66,7 @@ public class AnswerService {
         Long lAnswerId = Long.getLong(aId);
         Answer toDelete = answerRepository.findOne(lAnswerId);
         if (toDelete.isAccepted()){
-            answerservice.setQuestionToAnswered(id, false);
+            questionService.setQuestionToAnswered(id, false);
         }
         answerRepository.delete(toDelete);
     }
