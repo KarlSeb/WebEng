@@ -47,4 +47,9 @@ public class UserService {
     public List<AnswerDTO> getAllAnswersOfUser(String id) {
         return answerService.convertListToDTOs(answerService.getAllAnswersByUserId(id));
     }
+
+    //TODO
+    public List<QuestionDTO> getAllQuestionsUserAnswered(String id) {
+        return null;
+    }
 }
