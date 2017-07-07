@@ -36,6 +36,9 @@ public class AnswerService {
     public AnswerDTO answerQuestion(String id, AnswerDTO answerDTO) {
         Question parentQuestion = questionService.getQuestionById(id);
         User u = userService.getUserById(answerDTO.getUserId());
+        if(parentQuestion==null||u==null){
+            return new AnswerDTO();
+        }
         Answer newAnswer = new Answer(parentQuestion, answerDTO.getText(), u);
         return convertAnswerToDTO(answerRepository.save(newAnswer));
     }
@@ -80,6 +83,9 @@ public class AnswerService {
      * @return AnswerDTO mit den Daten der übergebenen Antwort
      */
     private AnswerDTO convertAnswerToDTO(Answer save) {
+        if (save == null){
+            return new AnswerDTO();
+        }
         AnswerDTO answer = new AnswerDTO();
         answer.setId(save.getId());
         answer.setAccepted(save.isAccepted());
@@ -95,11 +101,14 @@ public class AnswerService {
      *
      * @param answersToQuestion Liste aller Antworten die aus der Datenbank gelöscht werden sollen
      */
-     void deleteAnswerList(Collection<Answer> answersToQuestion) {
+    void deleteAnswerList(Collection<Answer> answersToQuestion) {
         answerRepository.delete(answersToQuestion);
     }
 
     List<AnswerDTO> convertListToDTOs(Collection<Answer> answers) {
+        if(answers==null){
+            return new LinkedList<>();
+        }
         List<AnswerDTO> answerDTOs = new LinkedList<>();
         for(Answer a: answers){
             AnswerDTO newDTO = new AnswerDTO();

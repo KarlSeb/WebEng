@@ -39,7 +39,7 @@ public class UserService {
     }
 
     /**
-     * Liefer eine Liste aller Antworten die ein Benutzer gegeben hat
+     * Liefert eine Liste aller Antworten die ein Benutzer gegeben hat
      *
      * @param id Eindeutiger Identifikator des Benutzers
      * @return Liste aller Antworten, die ein bestimmeter Nutzer gegeben hat, als DTOs
@@ -48,8 +48,13 @@ public class UserService {
         return answerService.convertListToDTOs(answerService.getAllAnswersByUserId(id));
     }
 
-    //TODO
+    /**
+     * Liefert eine Liste aller Fragen, auf die der übergebene Benutzer geantwortet hat.
+     *
+     * @param id Eindeutiger Identifikator des Benutzers
+     * @return Liste aller Fragen, auf die der Benutzer mit {@code id} geantwortet hat.
+     */
     public List<QuestionDTO> getAllQuestionsUserAnswered(String id) {
-        return null;
+        return questionService.findAllQuestionsByAnswerContainsUserId(id);
     }
 }

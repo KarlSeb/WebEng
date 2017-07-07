@@ -31,9 +31,6 @@ public class QuestionService {
      */
     public List<QuestionDTO> getAllQuestions() {
         List<Question> all = questionRepository.findAll();
-        if(all == null){
-            return new LinkedList<>();
-        }
         return convertListToDTOs(all);
     }
 
@@ -49,7 +46,7 @@ public class QuestionService {
     /**
      * Liefert eine Liste aller Fragen, die noch keine Antwort haben.
      *
-      * @return Liste aller Fragen, denen noch keine Antwort zugeordnet ist.
+     * @return Liste aller Fragen, denen noch keine Antwort zugeordnet ist.
      */
     public List<QuestionDTO> getAllUnsolvedQuestions() {
         return convertListToDTOs(questionRepository.findAllByNoReply());
@@ -69,14 +66,14 @@ public class QuestionService {
      * Löscht die Frage, die durch {@code id} identifiziert wird, und alle darunter liegenden Antworten, falls der
      * User, der mittels {@code uId} identifiziert wird, der Ersteller der Frage ist.
      *
-     * @param id Eindeutiger Identifikator für die Frage
+     * @param id  Eindeutiger Identifikator für die Frage
      * @param uId Eindeutiger Identifikator für die Frage
      */
     public void deleteQuestion(String id, String uId) {
         Long lId = Long.getLong(id);
         Long lUId = Long.getLong(uId);
         Question toDelete = questionRepository.findOne(lId);
-        if(toDelete.getUser().getId() != lUId){
+        if (toDelete.getUser().getId() != lUId) {
             //TODO evtl. mit Spring Security schöner lösen
             throw new IllegalArgumentException("The UserIds don´t match");
         }
@@ -95,9 +92,12 @@ public class QuestionService {
      * @param questions Liste der zu konvertierenden Fragen
      * @return Liste an QuestionDTOs.
      */
-     List<QuestionDTO> convertListToDTOs(Collection<Question> questions) {
+    List<QuestionDTO> convertListToDTOs(Collection<Question> questions) {
+        if (questions == null) {
+            return new LinkedList<>();
+        }
         List<QuestionDTO> questionDTOs = new LinkedList<>();
-        for(Question q: questions){
+        for (Question q : questions) {
             QuestionDTO newDTO = new QuestionDTO();
             newDTO.setId(q.getId());
             newDTO.setTitle(q.getTitle());
@@ -108,12 +108,27 @@ public class QuestionService {
         return questionDTOs;
     }
 
+    /**
+     * Konvertiert ein QuestionDTO in eine Frage.
+     *
+     * @param question Das DTO, das zu einer Frage konvertiert werden soll
+     * @return Die Frage, die die Infos aus dem DTO enthält.
+     */
     private Question convertDTOToQuestion(QuestionDTO question) {
         User user = userService.getUserById(question.getUser());
         return new Question(question.getTitle(), question.getText(), user);
     }
 
+    /**
+     * Konvertiert eine Frage zu einem QuestionDTO
+     *
+     * @param saved Die Frage die in ein DTO umgewandelt werden soll
+     * @return QuestionDTO, das alle Informationen enthält, die in der Question enthalten waren
+     */
     private QuestionDTO convertQuestionToDTO(Question saved) {
+        if (saved == null) {
+            return new QuestionDTO();
+        }
         QuestionDTO question = new QuestionDTO();
         question.setId(saved.getId());
         question.setTitle(saved.getTitle());
@@ -122,25 +137,55 @@ public class QuestionService {
         question.setAnswered(saved.isAnswered());
         question.setDate(saved.getDate());
         Collection<Long> answerIds = new LinkedList<>();
-        for(Answer a: saved.getAnswers()){
+        for (Answer a : saved.getAnswers()) {
             answerIds.add(a.getId());
         }
         question.setAnswers(answerIds);
         return question;
     }
 
+    /**
+     * Setzt die Frage mit der entsprechenden {@code id} auf {@code answered}
+     *
+     * @param id       Die eindeutige Id der Frage
+     * @param answered True, falls die Frage als beantwortet gilt
+     *                 False, falls die Frage noch zu benatworten ist.
+     */
     void setQuestionToAnswered(String id, boolean answered) {
         Long lQuestionId = Long.getLong(id);
         questionRepository.updateAnswered(lQuestionId, answered);
     }
 
+    /**
+     * Gibt die Frage mit der entsprecheden {@code id} zurück
+     *
+     * @param id Die eindeutige Id der Frage
+     * @return Die Frage mit der entsprechenden Id
+     */
     Question getQuestionById(String id) {
         Long lQuestionId = Long.getLong(id);
         return questionRepository.findOne(lQuestionId);
     }
 
+    /**
+     * Gibt alle Fragen, die ein bestimmter Nutzer gestellt hat zurück.
+     *
+     * @param id Die eindeutige Id des Benutzers
+     * @return Alle Fragen, die der Benutzer gestellt hat
+     */
     Collection<Question> findAllByUserId(String id) {
-         Long lUserId = Long.getLong(id);
-         return questionRepository.findAllByUserId(lUserId);
+        Long lUserId = Long.getLong(id);
+        return questionRepository.findAllByUserId(lUserId);
+    }
+
+    /**
+     * Gibt alle Fragen, auf die ein übergebener Benutzer geantwortet hat, als DTO-Liste zurück.
+     *
+     * @param id Eindeutiger Identifikator des Benutzers
+     * @return Liste aller Fragen, auf die der Benutzer mit {@code id} geantwortet hat.
+     */
+    List<QuestionDTO> findAllQuestionsByAnswerContainsUserId(String id) {
+        Long lUserId = Long.getLong(id);
+        return convertListToDTOs(questionRepository.findAllByAnswersContainsUserId(lUserId));
     }
 }
