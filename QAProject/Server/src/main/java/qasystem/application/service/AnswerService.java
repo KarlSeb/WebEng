@@ -21,9 +21,15 @@ public class AnswerService {
     @Autowired
     private UserService userService;
 
-    //TODO
+    /**
+     * Gibt alle Antworten zu einer übergebenen Frage zurück.
+     *
+     * @param id Eindeutiger Identifikator der Frage
+     * @return Liste aller Antworten, die der Frage mit {@code id} zugeordnet sind.
+     */
     public List<AnswerDTO> getAllAnswersByQuestionId(String id) {
-        return null;
+        Long lQuestionId = Long.getLong(id);
+        return convertListToDTOs(answerRepository.findAllByParentQuestion(lQuestionId));
     }
 
     /**
@@ -105,6 +111,12 @@ public class AnswerService {
         answerRepository.delete(answersToQuestion);
     }
 
+    /**
+     * Konvertiert eine übergebene Liste an Antworten in DTOs.
+     *
+     * @param answers Die Antworten, die in DTOs konvertiert werden sollen
+     * @return Liste aller Antworten als DTOs
+     */
     List<AnswerDTO> convertListToDTOs(Collection<Answer> answers) {
         if(answers==null){
             return new LinkedList<>();
