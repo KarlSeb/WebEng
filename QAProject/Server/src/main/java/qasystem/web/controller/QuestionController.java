@@ -77,7 +77,7 @@ public class QuestionController {
      * @param id Eindeutiger Identifikator für die beantwortete Frage
      * @return Die Antwort als DTO
      */
-    @PostMapping(value = "/{id:[1-9]+}/answers/newAnswer")
+    @PostMapping(value = "/{id:[1-9]+}/answers")
     @ResponseStatus(HttpStatus.CREATED)
     public AnswerDTO answerQuestion(@PathVariable("id") String id, @Valid AnswerDTO answer){
         return answerService.answerQuestion(id, answer);
@@ -88,7 +88,7 @@ public class QuestionController {
      *
      * @return Die Frage als DTO
      */
-    @PostMapping(value = "/newQuestion")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public QuestionDTO createQuestion(@Valid QuestionDTO question){
         return questionService.createQuestion(question);
