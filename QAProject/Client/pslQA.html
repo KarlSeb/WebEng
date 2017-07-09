@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>PSL QA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!--jquery cdn-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!--bootstrap cdn-->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+    <!--vuejs cdn-->
+    <script src="https://unpkg.com/vue@2.1.7/dist/vue.js"></script>
+</head>
+<body>
+<div class="jumbotron">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Login</h3>
+            <form @submit.prevent="vm.login" v-if="true" class="row">
+                <div class="input-group ">
+                    <input type="text" style="width: 45%;" class="form-control" placeholder="Name">
+                    <input type="password" style="width: 45%;" class="form-control" placeholder="Passwort">
+                    <button type="submit"  class="btn btn-default">Login</button>
+                </div>
+            </form>
+        </div>
+        <h3>Register</h3>
+        <div class="col-md-6">
+            <form @submit.prevent="vm.login" v-if="true" class="row">
+                <div class="input-group ">
+                    <input type="text" style="width: 45%;" class="form-control" placeholder="Name">
+                    <input type="password" style="width: 45%;" class="form-control" placeholder="Passwort">
+                    <button type="submit"  class="btn btn-default">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div id="app">
+        <tabs>
+            <tab name="All Qs" :selected="true">
+                <h1>All Qs</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet asperiores blanditiis deleniti earum
+                    eos fugit itaque magnam, magni minima non odio odit, placeat praesentium quis repudiandae sapiente
+                    sit sunt ullam?</p>
+            </tab>
+            <tab name="Unanswerd Qs">
+                <h1>Unanswerd Qs</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aperiam distinctio dolores est magni
+                    nemo, pariatur placeat tempora voluptatibus? Ab aut commodi excepturi quos reprehenderit?
+                    Accusantium aliquam eligendi excepturi rem?</p>
+            </tab>
+            <tab name="Unsolved Qs">
+                <h1>Unsolved Qs</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt dignissimos exercitationem
+                    expedita fuga harum, in iusto maxime neque pariatur quod saepe tempore voluptas. Molestiae neque
+                    porro quasi sed temporibus voluptas.</p>
+            </tab>
+            <tab name="Qs i answered" :need_auth="true">
+                <h1>Qs i answered</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea fuga iste iure maiores nam natus ullam
+                    veritatis. Consectetur debitis doloremque ducimus iste non nulla, odit provident quis, ratione
+                    repellendus velit.</p>
+            </tab>
+            <tab name="My Qs" :need_auth="true">
+                <h1>My Qs</h1>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti, illo, quaerat. Doloremque laborum
+                    libero quia! Dignissimos inventore ipsam, labore laudantium minima minus necessitatibus nostrum,
+                    pariatur porro provident, quas vitae voluptate?</p>
+            </tab>
+            <tab name="Login">
+
+
+
+            </tab>
+        </tabs>
+    </div>
+</div>
+
+<script type="x-template" id="template-tabs">
+    <div id="applicationContainer">
+        <div id="navBarContainer" class="navbar navbar-default">
+            <ul class=" nav navbar-nav">
+                <li class="nav-link" :class="{ active: menuItem.isActive}" v-for="menuItem in navItemsArray"><a
+                        :href="menuItem.href" @click="selectTabItem(menuItem)">{{ menuItem.name }}</a></li>
+            </ul>
+
+        </div>
+
+        <div id="tabContentContainer">
+            <slot></slot>
+        </div>
+    </div>
+</script>
+
+<script type="x-template" id="template-tab">
+    <div id="individualTabContentContainer" v-if="isActive" class="jumbotron">
+        <slot></slot>
+    </div>
+</script>
+
+<script>
+    Vue.component('tabs', {
+        props: ['loggedin'],
+        template: '#template-tabs',
+        data() {
+            return {
+                navItemsArray: []
+            }
+        },
+        mounted() {
+            this.navItemsArray = this.$children
+        },
+        methods: {
+            selectTabItem(passedMenuItemObject) {
+                if (passedMenuItemObject.need_auth) {
+                    alert("You have to be logged in!")
+                }
+                else {
+                    this.navItemsArray.forEach(navItem => {
+                        navItem.isActive = (passedMenuItemObject == navItem)
+                })
+                }
+            }
+        }
+    })
+
+    Vue.component('tab', {
+        template: '#template-tab',
+        props: {
+            need_auth: {default: false},
+            name: {required: true},
+            selected: {default: false}
+        },
+        data() {
+            return {
+                isActive: false,
+                needAuth: true
+            }
+        },
+        computed: {
+            href() {
+                return '#' + this.name.toLowerCase().replace(/ /g, '-')
+            }
+        },
+        mounted() {
+            this.isActive = this.selected
+        }
+    })
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            todos: [],
+            newTodo: '',
+            user: '',
+            pwd: '',
+            loggedIn: false,
+
+        },
+        login: function () {
+            /*$.ajax({
+             url:'http://localhost:8080/todos',
+             type:'HEAD',
+             xhrFields:{withCredentials:true},
+             headers:{
+             "Authorization":"Basic " + btoa(this.user + ":" + this.pwd)
+             },
+             success:function(){*/
+            this.loggedIn = true;
+            /*
+             }.bind(this)
+             });
+             */
+        },
+        logout: function () {
+            /*$.ajax({
+             url:'http://localhost:8080/logout',
+             type:'POST',
+             xhrFields:{withCredentials:true},
+             success:function(){*/
+            app.loggedIn = false;
+            /*}
+             });*/
+        },
+    })
+</script>
+</body>
+</html>
