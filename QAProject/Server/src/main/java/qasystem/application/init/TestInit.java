@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import qasystem.QAProjectApplication;
 import qasystem.persistence.entities.Answer;
@@ -22,20 +24,23 @@ import java.util.Collection;
  * Beim Start der Applikation wird die run()-Methode dieser Klasse aufgerufen. Diese Klasse dient dabei Testzwecken.
  */
 @Component
+@PropertySource("classpath:config.properties")
 public class TestInit implements CommandLineRunner{
     private final UserRepository repository;
     private final QuestionRepository qrepo;
     private final AnswerRepository arepo;
     private final GenericController genericController;
     private static final Logger log = LoggerFactory.getLogger(QAProjectApplication.class);
+    private final Environment env;
 
     @Autowired
     public TestInit(UserRepository repository, GenericController genericController, QuestionRepository qrepo,
-                    AnswerRepository arepo) {
+                    AnswerRepository arepo, Environment env) {
         this.repository = repository;
         this.genericController = genericController;
         this.qrepo = qrepo;
         this.arepo = arepo;
+        this.env = env;
     }
 
     /**
@@ -45,6 +50,14 @@ public class TestInit implements CommandLineRunner{
     @Override
     public void run(String... strings) throws Exception{
         // save a couple of Users
+//        if (!env.getProperty("testdataOn", boolean.class)) return; //Geht leider nur wenn String true oder false ist
+        String testdataOn = env.getProperty("testdataOn").toLowerCase();
+        if (testdataOn.equals("no") || testdataOn.equals("false") || testdataOn.equals("off")) return;
+        else if (!(testdataOn.equals("yes") || testdataOn.equals("true") || testdataOn.equals("on"))) {
+            System.err.println( "Testdata was turned off. "
+                    + "Allowed values for 'testdataOn' in the config.properties file are on/off, yes/no, true/false");
+            return;
+        }
         repository.save(new User("Jack", "Bauer"));
         repository.save(new User("Chloe", "O'Brian"));
         repository.save(new User("Kim", "Bauer"));
