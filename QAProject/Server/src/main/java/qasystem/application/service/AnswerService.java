@@ -28,7 +28,7 @@ public class AnswerService {
      * @return Liste aller Antworten, die der Frage mit {@code id} zugeordnet sind.
      */
     public List<AnswerDTO> getAllAnswersByQuestionId(String id) {
-        Long lQuestionId = Long.getLong(id);
+        Long lQuestionId = Long.parseLong(id);
         return convertListToDTOs(answerRepository.findAllByParentQuestion(lQuestionId));
     }
 
@@ -58,7 +58,7 @@ public class AnswerService {
      */
     public void acceptAnswer(String id, String aId) {
         questionService.setQuestionToAnswered(id, true);
-        Long lAnswerId = Long.getLong(aId);
+        Long lAnswerId = Long.parseLong(aId);
         answerRepository.updateAccepted(lAnswerId, true);
     }
 
@@ -72,7 +72,7 @@ public class AnswerService {
      */
     public void deleteAnswer(String id, String aId, String uId) {
         //TODO Benutzer überprüfen
-        Long lAnswerId = Long.getLong(aId);
+        Long lAnswerId = Long.parseLong(aId);
         Answer toDelete = answerRepository.findOne(lAnswerId);
         if (toDelete.isAccepted()){
             questionService.setQuestionToAnswered(id, false);
@@ -137,7 +137,7 @@ public class AnswerService {
 
     //TODO
     Collection<Answer> getAllAnswersByUserId(String id) {
-         Long lUserId = Long.getLong(id);
+         Long lUserId = Long.parseLong(id);
          return null;
     }
 }

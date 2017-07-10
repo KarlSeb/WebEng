@@ -39,7 +39,7 @@ public class QuestionService {
      *
      * @return Liste aller Fragen, die keine akzeptierte Antwort besitzen
      */
-    public List<QuestionDTO> getAllUnansweredQuestions() {
+    public List<QuestionDTO> getAllUnsolvedQuestions() {
         return convertListToDTOs(questionRepository.findAllByAnsweredNot());
     }
 
@@ -48,7 +48,7 @@ public class QuestionService {
      *
      * @return Liste aller Fragen, denen noch keine Antwort zugeordnet ist.
      */
-    public List<QuestionDTO> getAllUnsolvedQuestions() {
+    public List<QuestionDTO> getAllUnansweredQuestions() {
         return convertListToDTOs(questionRepository.findAllByNoReply());
     }
 
@@ -70,8 +70,8 @@ public class QuestionService {
      * @param uId Eindeutiger Identifikator für die Frage
      */
     public void deleteQuestion(String id, String uId) {
-        Long lId = Long.getLong(id);
-        Long lUId = Long.getLong(uId);
+        Long lId = Long.parseLong(id);
+        Long lUId = Long.parseLong(uId);
         Question toDelete = questionRepository.findOne(lId);
         if (toDelete.getUser().getId() != lUId) {
             //TODO evtl. mit Spring Security schöner lösen
@@ -152,7 +152,7 @@ public class QuestionService {
      *                 False, falls die Frage noch zu benatworten ist.
      */
     void setQuestionToAnswered(String id, boolean answered) {
-        Long lQuestionId = Long.getLong(id);
+        Long lQuestionId = Long.parseLong(id);
         questionRepository.updateAnswered(lQuestionId, answered);
     }
 
@@ -163,7 +163,7 @@ public class QuestionService {
      * @return Die Frage mit der entsprechenden Id
      */
     Question getQuestionById(String id) {
-        Long lQuestionId = Long.getLong(id);
+        Long lQuestionId = Long.parseLong(id);
         return questionRepository.findOne(lQuestionId);
     }
 
@@ -174,7 +174,7 @@ public class QuestionService {
      * @return Alle Fragen, die der Benutzer gestellt hat
      */
     Collection<Question> findAllByUserId(String id) {
-        Long lUserId = Long.getLong(id);
+        Long lUserId = Long.parseLong(id);
         return questionRepository.findAllByUserId(lUserId);
     }
 
@@ -185,7 +185,7 @@ public class QuestionService {
      * @return Liste aller Fragen, auf die der Benutzer mit {@code id} geantwortet hat.
      */
     List<QuestionDTO> findAllQuestionsByAnswerContainsUserId(String id) {
-        Long lUserId = Long.getLong(id);
+        Long lUserId = Long.parseLong(id);
         return convertListToDTOs(questionRepository.findAllByAnswersContainsUserId(lUserId));
     }
 }

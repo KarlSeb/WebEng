@@ -102,6 +102,8 @@ public class TestInit implements CommandLineRunner{
         qrepo.save(q2);
         Question q3 = new Question("title3", "question3?", bob);
         qrepo.save(q3);
+        Question q4 = new Question("title4", "question4?", jack);
+        qrepo.save(q4);
 
         Collection<Question> unanswered = qrepo.findAllByAnsweredNot();
         log.info("All unanswered questions");
