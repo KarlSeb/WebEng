@@ -17,11 +17,9 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     @Query(value = "select q from Question q where q.answered = false")
     Collection<Question> findAllByAnsweredNot();
 
-    //q.user.id so möglich?
     @Query(value = "select q from Question q where q.user.id = :UserId")
     Collection<Question> findAllByUserId(@Param("UserId") long UserId);
 
-    // why dis no work
     @Query(value = "select q from Question q where q.id not in (select distinct q2.id from Question q2, Answer a where a.parentQuestion = q2)")
     Collection<Question> findAllByNoReply();
 
