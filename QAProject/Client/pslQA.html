@@ -45,49 +45,54 @@
                     expedita fuga harum, in iusto maxime neque pariatur quod saepe tempore voluptas. Molestiae neque
                     porro quasi sed temporibus voluptas.</p>
             </tab>
-            <tab name="Qs i answered" :need_auth="true" v-if="loggedIn">
+            <tab name="Qs i answered" :need_auth="true" v-if="logged_in">
                 <h1>Qs i answered</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea fuga iste iure maiores nam natus ullam
                     veritatis. Consectetur debitis doloremque ducimus iste non nulla, odit provident quis, ratione
                     repellendus velit.</p>
             </tab>
-            <tab name="My Qs" :need_auth="true" v-if="loggedIn">
+            <tab name="My Qs" :need_auth="true" v-if="logged_in">
                 <h1>My Qs</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti, illo, quaerat. Doloremque laborum
                     libero quia! Dignissimos inventore ipsam, labore laudantium minima minus necessitatibus nostrum,
                     pariatur porro provident, quas vitae voluptate?</p>
             </tab>
-            <tab name="Login" v-if="!loggedIn">
+            <tab name="Login" v-if="!logged_in" data-toggle="modal" data-target="#myModal">
 
-                    <div class="col-md-6">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Login</h3>
+
+
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                    Launch demo modal
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title">Login</h4>
                             </div>
-                            <div class="panel-body">
-                                <form @submit.prevent="login" v-if="!loggedIn">
-                                    <input type="text" v-model="user" placeholder="Nutzername"/>
-                                    <input type="password" v-model="pwd" placeholder="Passwort"/>
-                                    <input type="submit" />
-                                </form>
+                            <div class="modal-body">
+                                                <div class="alert alert-danger" role="alert" v-show="loginfail">Alle Felder müssen befüllt sein!</div>
+                                                <input type="text" v-model="user" placeholder="Nutzername"/>
+                                                <input type="password" v-model="pwd" placeholder="Passwort"/>
+
+                            </div>
+                            <div class="modal-footer">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-success" @click="login" >Login</button>
+                                    <button type="button" class="btn btn-primary" @click="register" >Register</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 class="panel-title">Registration</h3>
-                            </div>
-                            <div class="panel-body">
-                                <form @submit.prevent="register" v-if="!loggedIn" >
-                                    <input type="text" v-model="new_user" placeholder="Nutzername"/>
-                                    <input type="password" v-model="new_pwd" placeholder="Passwort"/>
-                                    <input type="submit" />
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
+                </div>
+            </tab>
+            <tab name="Logout" :need_auth="true" v-if="logged_in" >Logout
             </tab>
         </tabs>
     </div>
@@ -102,6 +107,8 @@
                 <li class="nav-link" :class="{ active: menuItem.isActive}" v-for="menuItem in navItemsArray"><a
                         :href="menuItem.href" @click="selectTabItem(menuItem)">{{ menuItem.name }}</a></li>
             </ul>
+
+
 
         </div>
 
@@ -134,9 +141,16 @@
         },
         methods: {
             selectTabItem(passedMenuItemObject) {
-                    this.navItemsArray.forEach(navItem => {
-                        navItem.isActive = (passedMenuItemObject == navItem)
-                })
+                $('#myModal').modal({ show: false})
+                if(passedMenuItemObject.name == "Logout"){
+                    app.logout();
+                } else if(passedMenuItemObject.name == "Login"){
+
+                    $('#myModal').modal('show');
+                } else{
+                    this.navItemsArray.forEach(navItem => {navItem.isActive = (passedMenuItemObject == navItem)});
+
+                }
             }
 
         }
@@ -193,9 +207,10 @@
             newTodo:'',
             user:'',
             pwd:'',
-            new_user:'',
-            new_pwd:'',
-            loggedIn:false
+            loginfail: false,
+            registerfail: false,
+            logged_in:false,
+            logginname:'TESTuser'
         },
         created:function(){
             this.getAllQs();
@@ -205,7 +220,7 @@
                 xhrFields:{withCredentials:true},
                 complete:function(xhr){
                     if(xhr.status !== 401) {
-                        app.loggedIn = true;
+                        app.logged_in = true;
                     }
                 }
             });*/
@@ -214,23 +229,25 @@
             login:function(){
                 if (this.user != "" && this.pwd != "") {
                     $.ajax({
-                        url: 'http://localhost:8080/todos',
+                        url: 'http://localhost:8080/login',
                         type: 'HEAD',
                         xhrFields: {withCredentials: true},
                         headers: {
                             "Authorization": "Basic " + btoa(this.user + ":" + this.pwd)
                         },
                         success: function () {
-                            this.loggedIn = true;
+                            this.logged_in = true;
+                            this.loginfail = false;
+                            $('#myModal').modal('toggle');
                         }.bind(this)
                     });
                 } else {
-                    alert("Something was empty in Loginfields!")
+                    this.loginfail = true;
                 }
             },
             register:function(){
                 if (this.user != "" && this.pwd != "") {
-                    $.ajax({
+                   /* $.ajax({
                         url: 'http://localhost:8080/registration',
                         type: 'POST',
                         xhrFields: {withCredentials: true},
@@ -238,22 +255,19 @@
                             "Authorization": "Basic " + btoa(this.user + ":" + this.pwd)
                         },
                         success: function () {
-                            this.loggedIn = true;
+                            this.logged_in = true;
                         }.bind(this)
-                    });
+                    });*/
+                    this.logged_in = true;
+                    this.loginfail = false;
+                    $('#myModal').modal('toggle');
                 } else {
-                    alert("Something was empty!")
+                    this.loginfail = true;
                 }
             },
             logout:function(){
-                $.ajax({
-                    url:'http://localhost:8080/logout',
-                    type:'POST',
-                    xhrFields:{withCredentials:true},
-                    success:function(){
-                        app.loggedIn = false;
-                    }
-                });
+
+                this.logged_in = false;
             },
 
             addTodo:function(){
