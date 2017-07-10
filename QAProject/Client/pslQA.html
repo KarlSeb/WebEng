@@ -21,30 +21,9 @@
     <script src="https://unpkg.com/vue@2.1.7/dist/vue.js"></script>
 </head>
 <body>
-<div class="jumbotron">
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Login</h3>
-            <form @submit.prevent="vm.login" v-if="true" class="row">
-                <div class="input-group ">
-                    <input type="text" style="width: 45%;" class="form-control" placeholder="Name">
-                    <input type="password" style="width: 45%;" class="form-control" placeholder="Passwort">
-                    <button type="submit"  class="btn btn-default">Login</button>
-                </div>
-            </form>
-        </div>
-        <h3>Register</h3>
-        <div class="col-md-6">
-            <form @submit.prevent="vm.login" v-if="true" class="row">
-                <div class="input-group ">
-                    <input type="text" style="width: 45%;" class="form-control" placeholder="Name">
-                    <input type="password" style="width: 45%;" class="form-control" placeholder="Passwort">
-                    <button type="submit"  class="btn btn-default">Register</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
+
+
+
 <div class="container">
     <div id="app">
         <tabs>
@@ -66,26 +45,55 @@
                     expedita fuga harum, in iusto maxime neque pariatur quod saepe tempore voluptas. Molestiae neque
                     porro quasi sed temporibus voluptas.</p>
             </tab>
-            <tab name="Qs i answered" :need_auth="true">
+            <tab name="Qs i answered" :need_auth="true" v-if="loggedIn">
                 <h1>Qs i answered</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea fuga iste iure maiores nam natus ullam
                     veritatis. Consectetur debitis doloremque ducimus iste non nulla, odit provident quis, ratione
                     repellendus velit.</p>
             </tab>
-            <tab name="My Qs" :need_auth="true">
+            <tab name="My Qs" :need_auth="true" v-if="loggedIn">
                 <h1>My Qs</h1>
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti, illo, quaerat. Doloremque laborum
                     libero quia! Dignissimos inventore ipsam, labore laudantium minima minus necessitatibus nostrum,
                     pariatur porro provident, quas vitae voluptate?</p>
             </tab>
-            <tab name="Login">
+            <tab name="Login" v-if="!loggedIn">
 
-
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Login</h3>
+                            </div>
+                            <div class="panel-body">
+                                <form @submit.prevent="login" v-if="!loggedIn">
+                                    <input type="text" v-model="user" placeholder="Nutzername"/>
+                                    <input type="password" v-model="pwd" placeholder="Passwort"/>
+                                    <input type="submit" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Registration</h3>
+                            </div>
+                            <div class="panel-body">
+                                <form @submit.prevent="register" v-if="!loggedIn" >
+                                    <input type="text" v-model="new_user" placeholder="Nutzername"/>
+                                    <input type="password" v-model="new_pwd" placeholder="Passwort"/>
+                                    <input type="submit" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
 
             </tab>
         </tabs>
     </div>
 </div>
+
+
 
 <script type="x-template" id="template-tabs">
     <div id="applicationContainer">
@@ -109,31 +117,30 @@
     </div>
 </script>
 
+
+
 <script>
     Vue.component('tabs', {
-        props: ['loggedin'],
         template: '#template-tabs',
-        data() {
+
+        data:function() {
             return {
                 navItemsArray: []
             }
         },
-        mounted() {
+        mounted:function() {
+
             this.navItemsArray = this.$children
         },
         methods: {
             selectTabItem(passedMenuItemObject) {
-                if (passedMenuItemObject.need_auth) {
-                    alert("You have to be logged in!")
-                }
-                else {
                     this.navItemsArray.forEach(navItem => {
                         navItem.isActive = (passedMenuItemObject == navItem)
                 })
-                }
             }
+
         }
-    })
+    });
 
     Vue.component('tab', {
         template: '#template-tab',
@@ -142,58 +149,133 @@
             name: {required: true},
             selected: {default: false}
         },
-        data() {
+        data: function () {
             return {
                 isActive: false,
                 needAuth: true
             }
         },
         computed: {
-            href() {
+            href:function() {
                 return '#' + this.name.toLowerCase().replace(/ /g, '-')
             }
         },
-        mounted() {
+        mounted:function() {
             this.isActive = this.selected
         }
-    })
+    });
 
-    var vm = new Vue({
-        el: '#app',
-        data: {
-            todos: [],
-            newTodo: '',
-            user: '',
-            pwd: '',
-            loggedIn: false,
+    Vue.filter('uppercase', function(input){
+        return input.toUpperCase();
+    });
 
+
+    Vue.component('todo',{
+        props:['to','loggedin'],
+        template:'#tpl-todo',
+        methods:{
+            removeTodo:function(todo){
+                $.ajax({
+                    url:'http://localhost:8080/todos/' + todo.pid,
+                    type:'DELETE',
+                    xhrFields:{withCredentials:true},
+                    success:function(){
+                        this.$emit('removedtodo');
+                    }.bind(this)
+                });
+            }
+        }
+    });
+    var app = new Vue({
+        el : '#app',
+        data:{
+            questions:[],
+            newTodo:'',
+            user:'',
+            pwd:'',
+            new_user:'',
+            new_pwd:'',
+            loggedIn:false
         },
-        login: function () {
+        created:function(){
+            this.getAllQs();
             /*$.ajax({
-             url:'http://localhost:8080/todos',
-             type:'HEAD',
-             xhrFields:{withCredentials:true},
-             headers:{
-             "Authorization":"Basic " + btoa(this.user + ":" + this.pwd)
-             },
-             success:function(){*/
-            this.loggedIn = true;
-            /*
-             }.bind(this)
-             });
-             */
+                url:'http://localhost:8080/questions/all',
+                type:'DELETE',
+                xhrFields:{withCredentials:true},
+                complete:function(xhr){
+                    if(xhr.status !== 401) {
+                        app.loggedIn = true;
+                    }
+                }
+            });*/
         },
-        logout: function () {
-            /*$.ajax({
-             url:'http://localhost:8080/logout',
-             type:'POST',
-             xhrFields:{withCredentials:true},
-             success:function(){*/
-            app.loggedIn = false;
-            /*}
-             });*/
-        },
-    })
+        methods:{
+            login:function(){
+                if (this.user != "" && this.pwd != "") {
+                    $.ajax({
+                        url: 'http://localhost:8080/todos',
+                        type: 'HEAD',
+                        xhrFields: {withCredentials: true},
+                        headers: {
+                            "Authorization": "Basic " + btoa(this.user + ":" + this.pwd)
+                        },
+                        success: function () {
+                            this.loggedIn = true;
+                        }.bind(this)
+                    });
+                } else {
+                    alert("Something was empty in Loginfields!")
+                }
+            },
+            register:function(){
+                if (this.user != "" && this.pwd != "") {
+                    $.ajax({
+                        url: 'http://localhost:8080/registration',
+                        type: 'POST',
+                        xhrFields: {withCredentials: true},
+                        headers: {
+                            "Authorization": "Basic " + btoa(this.user + ":" + this.pwd)
+                        },
+                        success: function () {
+                            this.loggedIn = true;
+                        }.bind(this)
+                    });
+                } else {
+                    alert("Something was empty!")
+                }
+            },
+            logout:function(){
+                $.ajax({
+                    url:'http://localhost:8080/logout',
+                    type:'POST',
+                    xhrFields:{withCredentials:true},
+                    success:function(){
+                        app.loggedIn = false;
+                    }
+                });
+            },
+
+            addTodo:function(){
+                $.ajax({
+                    url:'http://localhost:8080/todos',
+                    type:'PUT',
+                    xhrFields:{withCredentials:true},
+                    data:JSON.stringify({content:this.newTodo}),
+                    contentType:'application/json',
+                    success:function(){
+                        app.newTodo = '';
+                        app.getTodos();
+                    }
+                });
+            },
+            getAllQs:function(){
+                $.getJSON('http://localhost:8080/questions/all', function(res){
+                    app.questions = res;
+                });
+            }
+        }
+    });
 </script>
 </body>
 </html>
