@@ -22,4 +22,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Long>{
 
     @Query(value = "select a from Answer a where a.parentQuestion.id = :questionId")
     Collection<Answer> findAllByParentQuestion(@Param("questionId") long questionId);
+
+    @Query(value = "select a from Answer a where a.user.id = :userId")
+    Collection<Answer> findAllByUser(@Param("userId") long userId);
 }
