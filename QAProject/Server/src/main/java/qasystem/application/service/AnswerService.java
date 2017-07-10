@@ -138,6 +138,6 @@ public class AnswerService {
     //TODO
     Collection<Answer> getAllAnswersByUserId(String id) {
          Long lUserId = Long.parseLong(id);
-         return null;
+         return answerRepository.findAllByUser(lUserId);
     }
 }
