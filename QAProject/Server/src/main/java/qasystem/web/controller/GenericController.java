@@ -29,7 +29,7 @@ public class GenericController {
      */
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerNewUser(@Valid UserDTO accountDto){
-        registrationService.registerNewUser(accountDto);
+    public UserDTO registerNewUser(@Valid UserDTO accountDto){
+        return registrationService.registerNewUser(accountDto);
     }
 }

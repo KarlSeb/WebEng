@@ -13,6 +13,7 @@ import qasystem.persistence.repositories.AnswerRepository;
 import qasystem.persistence.repositories.QuestionRepository;
 import qasystem.persistence.repositories.UserRepository;
 import qasystem.web.controller.GenericController;
+import qasystem.web.controller.QuestionController;
 import qasystem.web.dtos.UserDTO;
 
 import java.util.Collection;
@@ -29,7 +30,8 @@ public class TestInit implements CommandLineRunner{
     private static final Logger log = LoggerFactory.getLogger(QAProjectApplication.class);
 
     @Autowired
-    public TestInit(UserRepository repository, GenericController genericController, QuestionRepository qrepo, AnswerRepository arepo) {
+    public TestInit(UserRepository repository, GenericController genericController, QuestionRepository qrepo,
+                    AnswerRepository arepo) {
         this.repository = repository;
         this.genericController = genericController;
         this.qrepo = qrepo;
@@ -129,5 +131,6 @@ public class TestInit implements CommandLineRunner{
             log.info(q.toString());
         }
         log.info("Done\n");
+
     }
 }
