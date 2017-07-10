@@ -20,7 +20,7 @@
     <!--vuejs cdn-->
     <script src="https://unpkg.com/vue@2.1.7/dist/vue.js"></script>
 </head>
-<body>
+<body style="padding-top: 70px">
 
 <div class="container">
     <div id="app">
@@ -28,9 +28,9 @@
         <tabs>
             <tab name="All Qs" :selected="true">
                 <h1>All Qs</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet asperiores blanditiis deleniti earum
-                    eos fugit itaque magnam, magni minima non odio odit, placeat praesentium quis repudiandae sapiente
-                    sit sunt ullam?</p>
+                <!--<ul>
+                    <question v-for="t in questions" :to="t" :key="t.pid" :loggedin="loggedIn" @removedtodo="getAllQs"></question>
+                </ul>-->
             </tab>
             <tab name="Unanswerd Qs">
                 <h1>Unanswerd Qs</h1>
@@ -56,28 +56,71 @@
                     libero quia! Dignissimos inventore ipsam, labore laudantium minima minus necessitatibus nostrum,
                     pariatur porro provident, quas vitae voluptate?</p>
             </tab>
-            <tab name="Logout" :need_auth="true" v-if="logged_in" >Logout
+            <tab name="Logout" :need_auth="true" v-if="logged_in">Logout
             </tab>
         </tabs>
 
         <!-- Modal -->
-        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">Login</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-danger" role="alert" v-show="loginfail">Alle Felder müssen befüllt sein!</div>
-                        <input type="text" v-model="user" placeholder="Nutzername"/>
-                        <input type="password" v-model="pwd" placeholder="Passwort"/>
+                        <div class="alert alert-danger" role="alert" v-show="loginfail">Alle Felder müssen befüllt
+                            sein!
+                        </div>
+                        <input type="text" v-model="userDTO.user" placeholder="Nutzername"/>
+                        <input type="password" v-model="userDTO.pwd" placeholder="Passwort"/>
 
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group" role="group">
-                            <button type="submit" class="btn btn-success" @click="login" >Login</button>
-                            <button type="submit" class="btn btn-primary" @click="register" >Register</button>
+                            <button type="submit" class="btn btn-success" @click="login">Login</button>
+                            <button type="submit" class="btn btn-primary" @click="register">Register</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="newQModal" tabindex="-1" role="dialog" aria-labelledby="newQModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">New Q</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" role="alert" v-show="newtitlefail">Alle Felder müssen befüllt
+                            sein!
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Q-Titel</div>
+                            <div class="panel-body">
+                                <input type="text" class="form-control" placeholder="Title" v-model="newQuestion.title" aria-describedby="sizing-addon1" >
+                            </div>
+                        </div>
+                        <div class="alert alert-danger" role="alert" v-show="newtextfail">Alle Felder müssen befüllt
+                            sein!
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Q-Text</div>
+                            <div class="panel-body">
+                                <textarea class="form-control" placeholder="Question"  rows="10" v-model="newQuestion.text"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-danger" @click="discardQ">Discard Q</button>
+                            <button type="button" class="btn btn-primary" @click="addQ">Ask Q</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
 
@@ -89,21 +132,20 @@
 </div>
 
 
-
 <script type="x-template" id="template-tabs">
 
     <div id="applicationContainer">
-        <div id="navBarContainer" class="navbar navbar-default">
-            <ul class=" nav navbar-nav">
+        <div id="navBarContainer" class="navbar navbar-default navbar-fixed-top" style="padding-left: 70px">
+            <ul class=" nav navbar-nav ">
+                <li><a href="#" data-toggle="modal" data-target="#newQModal" v-if="logged_in">newQ</a></li>
                 <li class="nav-link" :class="{ active: menuItem.isActive}" v-for="menuItem in navItemsArray"><a
                         :href="menuItem.href" @click="selectTabItem(menuItem)">{{ menuItem.name }}</a></li>
-                <li><a href="#" data-toggle="modal" data-target="#myModal">Login</a></li>
+                <li><a href="#" data-toggle="modal" data-target="#loginModal" v-if="!logged_in">Login</a></li>
+
             </ul>
 
 
-
         </div>
-
         <div id="tabContentContainer">
             <slot></slot>
         </div>
@@ -116,32 +158,45 @@
     </div>
 </script>
 
+<template id="template-questions">
+    <li>{{to.content | uppercase}} <a href="" v-if="loggedin" @click.prevent="removeTodo(to)">delete</a></li>
+</template>
 
 
 <script>
     Vue.component('tabs', {
         template: '#template-tabs',
 
-        data:function() {
+        data: function () {
             return {
-                navItemsArray: []
+                navItemsArray: [],
+                logged_in: false
             }
         },
-        mounted:function() {
+        mounted: function () {
 
             this.navItemsArray = this.$children
+
+        },
+        computed: {
+            logged_in: function () {
+                return this.$parent.logged_in
+            },
+            logout: function () {
+                return this.$parent.logout()
+            },
+            newQuestion: function () {
+                return this.$parent.newQuestion
+            }
         },
         methods: {
             selectTabItem(passedMenuItemObject) {
-                /*
-                 $('#myModal').modal({ show: false})*/
-                if(passedMenuItemObject.name == "Logout"){
+                if (passedMenuItemObject.name == "Logout") {
                     app.logout();
-                /*} else if(passedMenuItemObject.name == "Login"){
-
-                    $('#myModal').modal('show');*/
-                } else{
-                    this.navItemsArray.forEach(navItem => {navItem.isActive = (passedMenuItemObject == navItem)});
+                } else {
+                    this.navItemsArray.forEach(navItem => {navItem.isActive = (passedMenuItemObject == navItem)
+                })
+                    ;
 
                 }
             }
@@ -163,63 +218,87 @@
             }
         },
         computed: {
-            href:function() {
+            href: function () {
                 return '#' + this.name.toLowerCase().replace(/ /g, '-')
             }
         },
-        mounted:function() {
+        mounted: function () {
             this.isActive = this.selected
         }
     });
 
-    Vue.filter('uppercase', function(input){
+    Vue.filter('uppercase', function (input) {
         return input.toUpperCase();
     });
 
+    Vue.component('question', {
+        props: {
+            id: {default: -1},
+            answered: {default: false},
+            date: {required: true},
+            text: {required: true},
+            title: {required: true},
+            user_id: {required: true}
 
-    Vue.component('todo',{
-        props:['to','loggedin'],
-        template:'#tpl-todo',
-        methods:{
-            removeTodo:function(todo){
+        },
+        data: function () {
+            return {
+                isActive: false,
+                needAuth: true
+            }
+        },
+        computed: {
+            date: function(){
+                return
+            }
+        },
+        methods: {
+            remove_question: function (todo) {
                 $.ajax({
-                    url:'http://localhost:8080/todos/' + todo.pid,
-                    type:'DELETE',
-                    xhrFields:{withCredentials:true},
-                    success:function(){
+                    url: 'http://localhost:8080/todos/' + todo.pid,
+                    type: 'DELETE',
+                    xhrFields: {withCredentials: true},
+                    success: function () {
                         this.$emit('removedtodo');
                     }.bind(this)
                 });
             }
         }
     });
+
     var app = new Vue({
-        el : '#app',
-        data:{
-            questions:[],
-            newTodo:'',
-            user:'',
-            pwd:'',
+        el: '#app',
+        data: {
+            questions: [],
+            newQuestion: {
+                title: '',
+                text: ''
+            },
+            userDTO: {
+                id: '-1',
+                user: '',
+                pwd: ''},
             loginfail: false,
+            newtitlefail: false,
+            newtextfail:false,
             registerfail: false,
-            logged_in:false,
-            logginname:'TESTuser'
+            logged_in: true,
         },
-        created:function(){
+        created: function () {
             this.getAllQs();
             /*$.ajax({
-                url:'http://localhost:8080/questions/all',
-                type:'DELETE',
-                xhrFields:{withCredentials:true},
-                complete:function(xhr){
-                    if(xhr.status !== 401) {
-                        app.logged_in = true;
-                    }
-                }
-            });*/
+             url:'http://localhost:8080/questions/all',
+             type:'DELETE',
+             xhrFields:{withCredentials:true},
+             complete:function(xhr){
+             if(xhr.status !== 401) {
+             app.logged_in = true;
+             }
+             }
+             });*/
         },
-        methods:{
-            login:function(){
+        methods: {
+            login: function () {
                 if (this.user != "" && this.pwd != "") {
                     $.ajax({
                         url: 'http://localhost:8080/',
@@ -231,25 +310,25 @@
                         success: function () {
                             this.logged_in = true;
                             this.loginfail = false;
-                            $('#myModal').modal('toggle');
+                            $('#loginModal').modal('toggle');
                         }.bind(this)
                     });
                 } else {
                     this.loginfail = true;
                 }
             },
-            register:function(){
+            register: function () {
                 if (this.user != "" && this.pwd != "") {
                     $.ajax({
                         url: 'http://localhost:8080/registration',
                         type: 'POST',
-                        xhrFields:{withCredentials:true},
-                        data:JSON.stringify({username:this.user, password:this.pwd}),
-                        contentType:'application/json',
+                        xhrFields: {withCredentials: true},
+                        data: JSON.stringify(this.userDTO),
+                        contentType: 'application/json;charset=UTF-8',
                         success: function () {
                             this.logged_in = true;
                             this.loginfail = false;
-                            $('#myModal').modal('toggle');
+                            $('#loginModal').modal('toggle');
                         }.bind(this)
                     });
 
@@ -257,26 +336,47 @@
                     this.loginfail = true;
                 }
             },
-            logout:function(){
+            logout: function () {
 
                 this.logged_in = false;
             },
-
-            addTodo:function(){
-                $.ajax({
-                    url:'http://localhost:8080/todos',
-                    type:'PUT',
-                    xhrFields:{withCredentials:true},
-                    data:JSON.stringify({content:this.newTodo}),
-                    contentType:'application/json',
-                    success:function(){
-                        app.newTodo = '';
-                        app.getTodos();
-                    }
-                });
+            discardQ: function () {
+                this.newQuestion.text = '';
+                this.newQuestion.title = '';
             },
-            getAllQs:function(){
-                $.getJSON('http://localhost:8080/questions/all', function(res){
+
+            addQ: function () {
+                if(this.newQuestion.title != "" && this.newQuestion.text != ""){
+                    alert("Title: "+this.newQuestion.title
+                        +"\nText: "+this.newQuestion.text
+                        +"\nUserID: "+this.userDTO.id)
+                    /*$.ajax({
+                        url: 'http://localhost:8080/todos',
+                        type: 'PUT',
+                        xhrFields: {withCredentials: true},
+                        data: JSON.stringify({content: this.newTodo}),
+                        contentType: 'application/json',
+                        success: function () {
+                            app.newTodo = '';
+                            app.getTodos();
+                            $('#loginModal').modal('toggle');
+                        }
+                    });*/
+                    $('#newQModal').modal('toggle');
+                    this.newtitlefail=false;
+                    this.newtextfail=false;
+                    this.discardQ();
+                } else {
+                    if(this.newQuestion.title == "" ){
+                        this.newtitlefail=true;
+                    }
+                    if(this.newQuestion.text == ""){
+                        this.newtextfail=true;
+                    }
+                }
+            },
+            getAllQs: function () {
+                $.getJSON('http://localhost:8080/questions/all', function (res) {
                     app.questions = res;
                 });
             }
