@@ -11,10 +11,12 @@ import qasystem.web.dtos.UserDTO;
  * Stellt die Funktionalität für das Registrieren eines neuen Nutzers bereit.
  */
 @Service
-public class RegistrationService {
+public class RegistrationService extends MyUserDetailsService{
 
     @Autowired
-    private UserRepository userRepository;
+    public RegistrationService(UserRepository userRepository){
+        super(userRepository);
+    }
 
     /**
      * Prüft ob der Account-Name bereits vergeben ist:
@@ -23,12 +25,19 @@ public class RegistrationService {
      *
      * @param accountDto DTO das die Daten des neuen Benutzers enthält
      */
-    public void registerNewUser(UserDTO accountDto) {
+    public UserDTO registerNewUser(UserDTO accountDto) {
         if (userExists(accountDto.getUserName())){
             throw new UserAlreadyExistsException(accountDto.getUserName());
         }
         User user = new User(accountDto.getUserName(), accountDto.getPassword());
-        userRepository.save(user);
+        return convertUserToDTO(userRepository.save(user));
+    }
+
+    private UserDTO convertUserToDTO(User save) {
+        UserDTO user = new UserDTO();
+        user.setId(save.getId());
+        user.setUserName(save.getUsername());
+        return user;
     }
 
     /**
