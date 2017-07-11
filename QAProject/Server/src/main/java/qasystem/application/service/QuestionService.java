@@ -1,6 +1,7 @@
 package qasystem.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import qasystem.persistence.entities.Answer;
 import qasystem.persistence.entities.Question;
@@ -57,6 +58,7 @@ public class QuestionService {
      *
      * @return Die Frage als DTO
      */
+    @Secured("ROLE_USER")
     public QuestionDTO createQuestion(QuestionDTO newQuestion) {
         final Question question = convertDTOToQuestion(newQuestion);
         return convertQuestionToDTO(questionRepository.save(question));
@@ -69,6 +71,7 @@ public class QuestionService {
      * @param id  Eindeutiger Identifikator für die Frage
      * @param uId Eindeutiger Identifikator für die Frage
      */
+    @Secured("ROLE_USER")
     public void deleteQuestion(String id, String uId) {
         Long lId = Long.parseLong(id);
         Long lUId = Long.parseLong(uId);
