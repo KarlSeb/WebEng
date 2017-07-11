@@ -35,7 +35,7 @@
             <tab name="Unanswerd Qs">
                 <h1>Unanswerd Qs</h1>
                 <ul>
-                    <question v-for="q in unaswered_questions" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"  @removedtodo="getAllQs"></question>
+                    <question v-for="q in unanswered_questions" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"  @removedtodo="getAllQs"></question>
                 </ul>
             </tab>
             <tab name="Unsolved Qs">
@@ -46,7 +46,9 @@
             </tab>
             <tab name="Qs i answered" :need_auth="true" v-if="logged_in">
                 <h1>Qs i answered</h1>
-
+                <ul>
+                    <question v-for="q in qs_i_answered" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"  @removedtodo="getAllQs"></question>
+                </ul>
             </tab>
             <tab name="My Qs" :need_auth="true" v-if="logged_in">
                 <h1>My Qs</h1>
@@ -303,8 +305,9 @@
         el: '#app',
         data: {
             all_questions: [],
-            unaswered_questions: [],
+            unanswered_questions: [],
             unsolved_questions: [],
+            qs_i_answered: [],
             newQuestion: {
                 title: '',
                 text: ''
@@ -321,7 +324,7 @@
         },
         computed: {
             my_qs:function () {
-                return this.all_questions.filter(this.checkIfMine)
+                return (this.all_questions.filter(this.checkIfMine))
             }
         },
         created: function () {
@@ -422,6 +425,7 @@
                 this.getAllQs();
                 this.getUnansweredQs();
                 this.getUnsolvedQs();
+                this.getQsIAnswered();
             },
             getAllQs: function () {
                 $.getJSON('http://localhost:8080/questions/all', function (res) {
@@ -429,12 +433,17 @@
                 });
             },
             getUnansweredQs: function () {
-                $.getJSON('http://localhost:8080/questions/all', function (res) {
+                $.getJSON('http://localhost:8080/questions/unanswered', function (res) {
                     app.unanswered_questions = res;
                 });
             },
+            getQsIAnswered: function () {
+                $.getJSON('http://localhost:8080/user/'+this.userDTO.id+'/answeredQuestions', function (res) {
+                    app.qs_i_answered = res;
+                });
+            },
             getUnsolvedQs: function () {
-                $.getJSON('http://localhost:8080/questions/all', function (res) {
+                $.getJSON('http://localhost:8080/questions/unsolved', function (res) {
                     app.unsolved_questions = res;
                 });
             }
