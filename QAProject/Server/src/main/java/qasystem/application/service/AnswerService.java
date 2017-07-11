@@ -1,6 +1,7 @@
 package qasystem.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import qasystem.persistence.entities.Answer;
 import qasystem.persistence.entities.Question;
@@ -39,6 +40,7 @@ public class AnswerService {
      * @param answerDTO DTO das die nötigen Daten zum erstellen der Antwort enthält
      * @return AnswerDTO, das die zusätzlichen, automatisch generierten Daten enthält.
      */
+    @Secured("ROLE_USER")
     public AnswerDTO answerQuestion(String id, AnswerDTO answerDTO) {
         Question parentQuestion = questionService.getQuestionById(id);
         User u = userService.getUserById(answerDTO.getUserId());
@@ -56,6 +58,7 @@ public class AnswerService {
      * @param id Eindeutiger Identifikator der Frage
      * @param aId EIndeutiger Identifikator der Antwort
      */
+    @Secured("ROLE_USER")
     public void acceptAnswer(String id, String aId) {
         questionService.setQuestionToAnswered(id, true);
         Long lAnswerId = Long.parseLong(aId);
@@ -70,6 +73,7 @@ public class AnswerService {
      * @param aId Eindeutiger Identifikator der Antwort
      * @param uId Eindeutiger Identifikator des Benutzers
      */
+    @Secured("ROLE_USER")
     public void deleteAnswer(String id, String aId, String uId) {
         //TODO Benutzer überprüfen
         Long lAnswerId = Long.parseLong(aId);
@@ -95,7 +99,7 @@ public class AnswerService {
         AnswerDTO answer = new AnswerDTO();
         answer.setId(save.getId());
         answer.setAccepted(save.isAccepted());
-        answer.setDate(save.getDate());
+        answer.setDate(save.getDate().toString());
         answer.setParentQuestionId(save.getParentQuestion().getId());
         answer.setText(save.getText());
         answer.setUserId(save.getUser().getId());
@@ -128,7 +132,7 @@ public class AnswerService {
             newDTO.setText(a.getText());
             newDTO.setUserId(a.getUser().getId());
             newDTO.setParentQuestionId(a.getParentQuestion().getId());
-            newDTO.setDate(a.getDate());
+            newDTO.setDate(a.getDate().toString());
             newDTO.setAccepted(a.isAccepted());
             answerDTOs.add(newDTO);
         }

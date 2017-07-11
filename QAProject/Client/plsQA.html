@@ -492,11 +492,11 @@
             login: function () {
                 if (this.user != "" && this.pwd != "") {
                     $.ajax({
-                        url: 'http://localhost:8080/',
+                        url: 'http://localhost:8080/questions/all',
                         type: 'HEAD',
                         xhrFields: {withCredentials: true},
                         headers: {
-                            "Authorization": "Basic " + btoa(this.user + ":" + this.pwd)
+                            "Authorization": "Basic " + btoa(this.userDTO.userName+ ":" +this.userDTO.password)
                         },
                         success: function () {
                             this.logged_in = true;

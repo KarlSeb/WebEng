@@ -1,6 +1,7 @@
 package qasystem.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import qasystem.persistence.entities.User;
 import qasystem.persistence.repositories.UserRepository;
@@ -34,6 +35,7 @@ public class UserService {
      * @param id Eindeutiger Identifikator eines Benutzers
      * @return Liste aller Fragen, die von einem Nutzer gestellt wurden, als DTOs
      */
+    @Secured("ROLE_USER")
     public List<QuestionDTO> getAllQuestionsOfUser(String id) {
         return questionService.convertListToDTOs(questionService.findAllByUserId(id));
     }
@@ -44,6 +46,7 @@ public class UserService {
      * @param id Eindeutiger Identifikator des Benutzers
      * @return Liste aller Antworten, die ein bestimmeter Nutzer gegeben hat, als DTOs
      */
+    @Secured("ROLE_USER")
     public List<AnswerDTO> getAllAnswersOfUser(String id) {
         return answerService.convertListToDTOs(answerService.getAllAnswersByUserId(id));
     }
@@ -54,6 +57,7 @@ public class UserService {
      * @param id Eindeutiger Identifikator des Benutzers
      * @return Liste aller Fragen, auf die der Benutzer mit {@code id} geantwortet hat.
      */
+    @Secured("ROLE_USER")
     public List<QuestionDTO> getAllQuestionsUserAnswered(String id) {
         return questionService.findAllQuestionsByAnswerContainsUserId(id);
     }

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Exception die geworfen wird, falls der Nutzername bereits von einem anderen Benutzer verwendet wurde.
  */
-@ResponseStatus(HttpStatus.IM_USED)
+@ResponseStatus(HttpStatus.CONFLICT)
 public class UserAlreadyExistsException extends RuntimeException {
     public UserAlreadyExistsException(String username) {
         super("The username "+username+" is already taken!");

@@ -33,12 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.cors();
-        http.authorizeRequests()
-                .antMatchers("/registration", "/questions/all", "/questions/unsolved", "/questions/unanswered").permitAll()
-                .antMatchers("/questions/**", "/user/**").authenticated()
-                .and().httpBasic();
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService);
+        auth.authenticationProvider(authProvider());
     }
 
     @Bean
@@ -88,8 +85,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
-        auth.authenticationProvider(authProvider());
+    protected void configure(HttpSecurity http) throws Exception {
+               http.cors()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/login*").anonymous()
+                .antMatchers("/registration", "/questions/all", "/questions/unsolved", "/questions/unanswered").permitAll()
+                .antMatchers("/questions/**", "/user/**").authenticated()
+                .anyRequest().authenticated()
+                .and().httpBasic();
     }
 }
