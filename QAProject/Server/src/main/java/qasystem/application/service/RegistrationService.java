@@ -1,6 +1,7 @@
 package qasystem.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import qasystem.application.exceptions.UserAlreadyExistsException;
 import qasystem.persistence.entities.User;
@@ -13,9 +14,12 @@ import qasystem.web.dtos.UserDTO;
 @Service
 public class RegistrationService extends MyUserDetailsService{
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public RegistrationService(UserRepository userRepository){
+    public RegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         super(userRepository);
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -29,7 +33,7 @@ public class RegistrationService extends MyUserDetailsService{
         if (userExists(accountDto.getUserName())){
             throw new UserAlreadyExistsException(accountDto.getUserName());
         }
-        User user = new User(accountDto.getUserName(), accountDto.getPassword());
+        User user = new User(accountDto.getUserName(), passwordEncoder.encode(accountDto.getPassword()));
         return convertUserToDTO(userRepository.save(user));
     }
 
