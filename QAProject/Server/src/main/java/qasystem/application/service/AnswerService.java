@@ -95,7 +95,7 @@ public class AnswerService {
         AnswerDTO answer = new AnswerDTO();
         answer.setId(save.getId());
         answer.setAccepted(save.isAccepted());
-        answer.setDate(save.getDate());
+        answer.setDate(save.getDate().toString());
         answer.setParentQuestionId(save.getParentQuestion().getId());
         answer.setText(save.getText());
         answer.setUserId(save.getUser().getId());
@@ -128,7 +128,7 @@ public class AnswerService {
             newDTO.setText(a.getText());
             newDTO.setUserId(a.getUser().getId());
             newDTO.setParentQuestionId(a.getParentQuestion().getId());
-            newDTO.setDate(a.getDate());
+            newDTO.setDate(a.getDate().toString());
             newDTO.setAccepted(a.isAccepted());
             answerDTOs.add(newDTO);
         }
