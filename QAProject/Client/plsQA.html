@@ -29,32 +29,30 @@
             <tab name="All Qs" :selected="true">
                 <h1>All Qs</h1>
                 <ul>
-                    <question v-for="q in questions" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"  @removedtodo="getAllQs"></question>
+                    <question v-for="q in all_questions" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"  @removedtodo="getAllQs"></question>
                 </ul>
             </tab>
             <tab name="Unanswerd Qs">
                 <h1>Unanswerd Qs</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A aperiam distinctio dolores est magni
-                    nemo, pariatur placeat tempora voluptatibus? Ab aut commodi excepturi quos reprehenderit?
-                    Accusantium aliquam eligendi excepturi rem?</p>
+                <ul>
+                    <question v-for="q in unaswered_questions" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"  @removedtodo="getAllQs"></question>
+                </ul>
             </tab>
             <tab name="Unsolved Qs">
                 <h1>Unsolved Qs</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deserunt dignissimos exercitationem
-                    expedita fuga harum, in iusto maxime neque pariatur quod saepe tempore voluptas. Molestiae neque
-                    porro quasi sed temporibus voluptas.</p>
+                <ul>
+                    <question v-for="q in unsolved_questions" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"  @removedtodo="getAllQs"></question>
+                </ul>
             </tab>
             <tab name="Qs i answered" :need_auth="true" v-if="logged_in">
                 <h1>Qs i answered</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ea fuga iste iure maiores nam natus ullam
-                    veritatis. Consectetur debitis doloremque ducimus iste non nulla, odit provident quis, ratione
-                    repellendus velit.</p>
+
             </tab>
             <tab name="My Qs" :need_auth="true" v-if="logged_in">
                 <h1>My Qs</h1>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti, illo, quaerat. Doloremque laborum
-                    libero quia! Dignissimos inventore ipsam, labore laudantium minima minus necessitatibus nostrum,
-                    pariatur porro provident, quas vitae voluptate?</p>
+                <ul>
+                    <question v-for="q in my_qs" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"  @removedtodo="getAllQs"></question>
+                </ul>
             </tab>
             <tab name="Logout" :need_auth="true" v-if="logged_in">Logout
             </tab>
@@ -304,13 +302,15 @@
     var app = new Vue({
         el: '#app',
         data: {
-            questions: [],
+            all_questions: [],
+            unaswered_questions: [],
+            unsolved_questions: [],
             newQuestion: {
                 title: '',
                 text: ''
             },
             userDTO: {
-                id: '-1',
+                id: '7',
                 user: '',
                 pwd: ''},
             loginfail: false,
@@ -319,8 +319,13 @@
             registerfail: false,
             logged_in: true,
         },
+        computed: {
+            my_qs:function () {
+                return this.all_questions.filter(this.checkIfMine)
+            }
+        },
         created: function () {
-            this.getAllQs();
+            this.getQs();
             /*$.ajax({
              url:'http://localhost:8080/questions/all',
              type:'DELETE',
@@ -410,9 +415,27 @@
                     }
                 }
             },
+            checkIfMine: function (question) {
+                return (question.user == this.userDTO.id) + " myid" + this.userDTO.id + " qID"+ question.user ;
+            },
+            getQs: function () {
+                this.getAllQs();
+                this.getUnansweredQs();
+                this.getUnsolvedQs();
+            },
             getAllQs: function () {
                 $.getJSON('http://localhost:8080/questions/all', function (res) {
-                    app.questions = res;
+                    app.all_questions = res;
+                });
+            },
+            getUnansweredQs: function () {
+                $.getJSON('http://localhost:8080/questions/all', function (res) {
+                    app.unanswered_questions = res;
+                });
+            },
+            getUnsolvedQs: function () {
+                $.getJSON('http://localhost:8080/questions/all', function (res) {
+                    app.unsolved_questions = res;
                 });
             }
         }
