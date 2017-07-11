@@ -102,7 +102,10 @@ public class QuestionService {
             newDTO.setId(q.getId());
             newDTO.setTitle(q.getTitle());
             newDTO.setText(q.getText());
+            newDTO.setDate(q.getDate().toString());
             newDTO.setUser(q.getUser().getId());
+            newDTO.setAnswerCount(q.getAnswers().size());
+            newDTO.setAnswered(q.isAnswered());
             questionDTOs.add(newDTO);
         }
         return questionDTOs;
@@ -123,7 +126,7 @@ public class QuestionService {
      * Konvertiert eine Frage zu einem QuestionDTO
      *
      * @param saved Die Frage die in ein DTO umgewandelt werden soll
-     * @return QuestionDTO, das alle Informationen enthält, die in der Question enthalten waren
+     * @return QuestionDTO, das alle für das Frontend wichtigen Informationen enthält
      */
     private QuestionDTO convertQuestionToDTO(Question saved) {
         if (saved == null) {
@@ -135,12 +138,8 @@ public class QuestionService {
         question.setText(saved.getText());
         question.setUser(saved.getUser().getId());
         question.setAnswered(saved.isAnswered());
-        question.setDate(saved.getDate());
-        Collection<Long> answerIds = new LinkedList<>();
-        for (Answer a : saved.getAnswers()) {
-            answerIds.add(a.getId());
-        }
-        question.setAnswers(answerIds);
+        question.setDate(saved.getDate().toString());
+        question.setAnswerCount(saved.getAnswers().size());
         return question;
     }
 

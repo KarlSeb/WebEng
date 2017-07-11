@@ -21,7 +21,7 @@ public class QuestionDTO {
     @NotEmpty
     private String text;
 
-    private GregorianCalendar date;
+    private String date;
 
     private boolean answered;
 
@@ -29,7 +29,7 @@ public class QuestionDTO {
     @NotEmpty
     private long userId;
 
-    private Collection<Long> answerIds = new LinkedList<>();
+    private int answerCount;
 
 
     public long getId() {
@@ -56,11 +56,11 @@ public class QuestionDTO {
         this.text = text;
     }
 
-    public GregorianCalendar getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(GregorianCalendar date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -80,11 +80,11 @@ public class QuestionDTO {
         this.userId = userId;
     }
 
-    public Collection<Long> getAnswers() {
-        return answerIds;
+    public int getAnswerCount() {
+        return answerCount;
     }
 
-    public void setAnswers(Collection<Long> answerIds) {
-        this.answerIds = answerIds;
+    public void setAnswerCount(int answerCount) {
+        this.answerCount = answerCount;
     }
 }

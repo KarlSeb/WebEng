@@ -3,7 +3,6 @@ package qasystem.web.dtos;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
-import java.util.GregorianCalendar;
 
 /**
  * Kapselt die Daten für eine Antwort.
@@ -17,7 +16,7 @@ public class AnswerDTO {
 
     private String text;
 
-    private GregorianCalendar date;
+    private String date;
 
     private boolean accepted;
 
@@ -49,11 +48,11 @@ public class AnswerDTO {
         this.text = text;
     }
 
-    public GregorianCalendar getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(GregorianCalendar date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
