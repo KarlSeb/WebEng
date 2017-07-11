@@ -28,9 +28,9 @@
         <tabs>
             <tab name="All Qs" :selected="true">
                 <h1>All Qs</h1>
-                <!--<ul>
-                    <question v-for="t in questions" :to="t" :key="t.pid" :loggedin="loggedIn" @removedtodo="getAllQs"></question>
-                </ul>-->
+                <ul>
+                    <question v-for="q in questions" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"  @removedtodo="getAllQs"></question>
+                </ul>
             </tab>
             <tab name="Unanswerd Qs">
                 <h1>Unanswerd Qs</h1>
@@ -159,7 +159,39 @@
 </script>
 
 <template id="template-questions">
-    <li>{{to.content | uppercase}} <a href="" v-if="loggedin" @click.prevent="removeTodo(to)">delete</a></li>
+    <div class="panel panel-default"  @click="show_question(q.id)">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-8">
+                    <h2>{{q.title}}</h2>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Gestellt am: </span></h6>
+
+                        </div>
+                        <div class="col-md-6">
+                           <h6>{{q.date}}</h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6> Solved: </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <span class="glyphicon glyphicon-ok" aria-hidden="true" v-show="q.answered"></span>
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true" v-show="!q.answered"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            {{q.text}}
+        </div>
+    </div>
 </template>
 
 
@@ -232,13 +264,16 @@
     });
 
     Vue.component('question', {
+        template: '#template-questions',
         props: {
+            q: '',
             id: {default: -1},
             answered: {default: false},
             date: {required: true},
             text: {required: true},
             title: {required: true},
-            user_id: {required: true}
+            user_id: {required: true},
+            loggedin: {default:false}
 
         },
         data: function () {
@@ -248,9 +283,6 @@
             }
         },
         computed: {
-            date: function(){
-                return
-            }
         },
         methods: {
             remove_question: function (todo) {
@@ -262,6 +294,9 @@
                         this.$emit('removedtodo');
                     }.bind(this)
                 });
+            },
+            show_question: function (id) {
+                alert("show Question with id: "+id);
             }
         }
     });
