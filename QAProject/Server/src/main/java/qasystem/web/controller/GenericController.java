@@ -2,6 +2,7 @@ package qasystem.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import qasystem.application.service.RegistrationService;
 import qasystem.web.dtos.UserDTO;
@@ -29,7 +30,7 @@ public class GenericController {
      */
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO registerNewUser(@Valid UserDTO accountDto){
-        return registrationService.registerNewUser(accountDto);
+    public UserDTO registerNewUser(@Valid @RequestBody UserDTO accountDto){
+        return this.registrationService.registerNewUser(accountDto);
     }
 }
