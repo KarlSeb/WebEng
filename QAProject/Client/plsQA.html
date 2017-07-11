@@ -71,8 +71,8 @@
                         <div class="alert alert-danger" role="alert" v-show="loginfail">Alle Felder müssen befüllt
                             sein!
                         </div>
-                        <input type="text" v-model="userDTO.user" placeholder="Nutzername"/>
-                        <input type="password" v-model="userDTO.pwd" placeholder="Passwort"/>
+                        <input type="text" v-model="userDTO.userName" placeholder="Nutzername"/>
+                        <input type="password" v-model="userDTO.password" placeholder="Passwort"/>
 
                     </div>
                     <div class="modal-footer">
@@ -311,8 +311,8 @@
             },
             userDTO: {
                 id: '7',
-                user: '',
-                pwd: ''},
+                userName: '',
+                password: ''},
             loginfail: false,
             newtitlefail: false,
             newtextfail:false,
