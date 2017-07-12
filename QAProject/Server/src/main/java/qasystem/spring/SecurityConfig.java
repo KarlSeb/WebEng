@@ -17,8 +17,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import qasystem.application.exceptions.handler.CustomAccessDeniedHandler;
 import qasystem.application.service.MyUserDetailsService;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 
 @EnableWebSecurity
@@ -26,10 +28,12 @@ import java.util.Arrays;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
+    private CustomAccessDeniedHandler accessDeniedHandler;
 
     @Autowired
-    public SecurityConfig(MyUserDetailsService userDetailsService) {
+    public SecurityConfig(MyUserDetailsService userDetailsService, CustomAccessDeniedHandler accessDeniedHandler) {
         this.userDetailsService = userDetailsService;
+        this.accessDeniedHandler = accessDeniedHandler;
     }
 
     @Override
@@ -40,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(10, new SecureRandom());
     }
 
     @Bean
@@ -80,7 +84,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
              .and()
              .csrf().disable()
              .headers().disable()
-             .httpBasic();
+             .httpBasic().and().exceptionHandling().accessDeniedHandler(accessDeniedHandler);
         }
     }
 
