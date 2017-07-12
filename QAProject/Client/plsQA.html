@@ -141,8 +141,8 @@
             </div>
         </div>
 
-        <div class="modal fade" id="qModal" tabindex="-1" role="dialog" aria-labelledby="newQModalLabel">
-            <div class="modal-dialog" role="document">
+        <div class="modal fade bs-example-modal-lg" id="qModal" tabindex="-1" role="dialog" aria-labelledby="newQModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
@@ -184,13 +184,20 @@
                     </div>
                     <div class="modal-body">
                         <answer v-for="a in currentQuestion.answers" :a="a" :id="a.id" :text="a.text"
-                                  :date="a.date" :accepted="a.accepted" :user_id="a.user_id"
+                                  :date="a.date" :accepted="a.accepted" :user_id="a.userId"
                                   @removedquestion="getAllQs"></answer>
                     </div>
                     <div class="modal-footer">
-                        <div class="btn-group" role="group">
+                        <div class="btn-group" role="group" v-if="showDelete(currentQuestion)">
+                            <button  type="button" class="btn btn-danger"  @click="remove_question(currentQuestion)">DELETE Q</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
+                        <div v-if="!showDelete(currentQuestion)">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+
+
+
 
                     </div>
                 </div>
@@ -227,11 +234,12 @@
 </script>
 
 <template id="template-questions">
-    <div class="panel panel-default" data-toggle="modal" data-target="#qModal" @click="showQuestion()">
+    <div class="panel panel-default" data-toggle="modal" data-target="#qModal" @click="showQuestion()" style="cursor: pointer">
         <div class="panel-heading">
             <div class="row">
                 <div class="col-md-8">
                     <h2>{{q.title | truncate(15)}}</h2>
+                    <h4>{{q.user}}</h4>
                 </div>
 
                 <div class="col-md-4">
@@ -272,10 +280,15 @@
                 </div>
                 <div class="col-md-9">
                     <div class="row">
-                        <div class="col-md-6">
-                            <h6>Gestellt am: </span></h6>
+                        <div class="col-md-4">
+                            <div v-if="showDelete(a.user_id)">
+                                <button  type="button" class="btn btn-danger"  @click="remove_answer(a)">DELETE A</button>
+                            </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
+                            <h6>Geantwortet am: </span></h6>
+                        </div>
+                        <div class="col-md-4">
                             <h6>{{a.date}}</h6>
                         </div>
                     </div>
@@ -384,16 +397,7 @@
             }
         },
         methods: {
-            remove_question: function (todo) {
-                $.ajax({
-                    url: 'http://localhost:8080/todos/' + todo.pid,
-                    type: 'DELETE',
-                    xhrFields: {withCredentials: true},
-                    success: function () {
-                        this.$emit('removedquestion');
-                    }.bind(this)
-                });
-            },
+
             showQuestion: function () {
                 this.getAsToQ(this.id);
                 app.currentQuestion.id = this.id;
@@ -401,8 +405,6 @@
                 app.currentQuestion.text = this.text;
                 app.currentQuestion.user_id = this.user_id;
                 app.currentQuestion.answered = this.answered;
-
-
             },
             getAsToQ: function () {
                 $.getJSON('http://localhost:8080/questions/' + this.id + '/answers', function (res) {
@@ -424,15 +426,19 @@
 
         },
         methods: {
-            remove_question: function (todo) {
-                $.ajax({
-                    url: 'http://localhost:8080/todos/' + todo.pid,
-                    type: 'DELETE',
-                    xhrFields: {withCredentials: true},
-                    success: function () {
-                        this.$emit('removedquestion');
-                    }.bind(this)
-                });
+            showDelete: function () {
+                return (this.user_id == app.userDTO.id) && app.logged_in
+            },
+            remove_answer: function (answer) {
+                /*$.ajax({
+                 url: 'http://localhost:8080/todos/' + todo.pid,
+                 type: 'DELETE',
+                 xhrFields: {withCredentials: true},
+                 success: function () {
+                 this.$emit('removedquestion');
+                 }.bind(this)
+                 });*/
+                alert("remove answer with ID"+answer.id)
             }
         }
     });
@@ -466,7 +472,7 @@
             newtitlefail: false,
             newtextfail: false,
             registerfail: false,
-            logged_in: true,
+            logged_in: false,
         },
         computed: {
             my_qs: function () {
@@ -490,7 +496,7 @@
         },
         methods: {
             login: function () {
-                if (this.user != "" && this.pwd != "") {
+                if (this.userDTO.userName != "" && this.userDTO.password != "") {
                     $.ajax({
                         url: 'http://localhost:8080/questions/all',
                         type: 'HEAD',
@@ -509,7 +515,7 @@
                 }
             },
             register: function () {
-                if (this.user != "" && this.pwd != "") {
+                if (this.userDTO.userName != "" && this.userDTO.password != "") {
                     $.ajax({
                         url: 'http://localhost:8080/registration',
                         type: 'POST',
@@ -519,6 +525,7 @@
                         success: function () {
                             this.logged_in = true;
                             this.loginfail = false;
+
                             $('#loginModal').modal('toggle');
                         }.bind(this)
                     });
@@ -571,6 +578,7 @@
                 this.getUnansweredQs();
                 this.getUnsolvedQs();
                 this.getQsIAnswered();
+
             },
             getAllQs: function () {
                 $.getJSON('http://localhost:8080/questions/all', function (res) {
@@ -591,6 +599,20 @@
                 $.getJSON('http://localhost:8080/questions/unsolved', function (res) {
                     app.unsolved_questions = res;
                 });
+            },
+            showDelete: function (question) {
+                return (question.user_id == this.userDTO.id) && this.logged_in
+            },
+            remove_question: function (question) {
+                /*$.ajax({
+                 url: 'http://localhost:8080/todos/' + todo.pid,
+                 type: 'DELETE',
+                 xhrFields: {withCredentials: true},
+                 success: function () {
+                 this.$emit('removedquestion');
+                 }.bind(this)
+                 });*/
+                alert("remove question with ID"+question.id)
             }
 
         }
@@ -598,3 +620,4 @@
 </script>
 </body>
 </html>
+
