@@ -122,8 +122,8 @@ public class QuestionController {
      */
     @DeleteMapping (value = "/{id:[1-9]+}/user/{uId:[1-9]+}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteQuestion(@PathVariable("id") String id, @PathVariable("uId") String uId){
-        questionService.deleteQuestion(id, uId);
+    public void deleteQuestion(@PathVariable("id") String id, @PathVariable("uId") String uId, @AuthenticationPrincipal User user){
+        questionService.deleteQuestion(id, user);
     }
 
     /**

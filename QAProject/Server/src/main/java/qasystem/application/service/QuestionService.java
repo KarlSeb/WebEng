@@ -75,18 +75,13 @@ public class QuestionService {
      * User, der mittels {@code uId} identifiziert wird, der Ersteller der Frage ist.
      *
      * @param id  Eindeutiger Identifikator für die Frage
-     * @param uId Eindeutiger Identifikator für die Frage
+     * @param user Benutzer, der die Frage löschen möchte
      */
     @Secured("ROLE_USER")
-    public void deleteQuestion(String id, String uId) {
-        //TODO umschreiben nachdem @AuthentificationPrincipal steht.
+    public void deleteQuestion(String id, org.springframework.security.core.userdetails.User user) {
+        authenticateUserForQuestion(id, user);
         Long lId = Long.parseLong(id);
-        Long lUId = Long.parseLong(uId);
         Question toDelete = questionRepository.findOne(lId);
-        if (toDelete.getUser().getId() != lUId) {
-            //TODO evtl. mit Spring Security schöner lösen
-            throw new IllegalArgumentException("The UserIds don´t match");
-        }
         Collection<Answer> answersToQuestion = new LinkedList<>();
         questionRepository.delete(lId);
         answersToQuestion.addAll(toDelete.getAnswers());
@@ -209,6 +204,20 @@ public class QuestionService {
         }
         Long lUserId = Long.parseLong(id);
         return convertListToDTOs(questionRepository.findAllByAnswersContainsUserId(lUserId));
+    }
+
+    void authenticateUserForQuestion(String questionId, org.springframework.security.core.userdetails.User user) {
+        User foundUser = userService.getUserByAuthenticationPrinciple(user);
+        if (foundUser == null) throw new SecurityException("User that tried to take this action was not found in Database.");
+        Long lQuestionId = Long.parseLong(questionId);
+        boolean allowed = false;
+        for (Question q : foundUser.getQuestions()) {
+            if (q.getId() == lQuestionId) {
+                allowed = true;
+                break;
+            }
+        }
+        if (!allowed) throw new SecurityException("This User is not allowed to take that action.");
     }
 
     private static String format(GregorianCalendar calendar){
