@@ -111,6 +111,7 @@ public class QuestionService {
             newDTO.setUser(q.getUser().getId());
             newDTO.setAnswerCount(q.getAnswers().size());
             newDTO.setAnswered(q.isAnswered());
+            newDTO.setUserName(q.getUser().getUsername());
             questionDTOs.add(newDTO);
         }
         return questionDTOs;
@@ -145,6 +146,7 @@ public class QuestionService {
         question.setAnswered(saved.isAnswered());
         question.setDate(format(saved.getDate()));
         question.setAnswerCount(saved.getAnswers().size());
+        question.setUserName(saved.getUser().getUsername());
         return question;
     }
 

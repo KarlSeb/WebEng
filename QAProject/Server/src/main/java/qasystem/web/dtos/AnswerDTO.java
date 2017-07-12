@@ -24,6 +24,8 @@ public class AnswerDTO {
     @NotNull
     private long userId;
 
+    private String userName;
+
     public long getId() {
         return id;
     }
@@ -71,4 +73,8 @@ public class AnswerDTO {
     public void setUserId(long userId) {
         this.userId = userId;
     }
+
+    public String getUserName() {return userName;}
+
+    public void setUserName(String userName) {this.userName = userName;}
 }

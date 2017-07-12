@@ -105,6 +105,7 @@ public class AnswerService {
         answer.setParentQuestionId(save.getParentQuestion().getId());
         answer.setText(save.getText());
         answer.setUserId(save.getUser().getId());
+        answer.setUserName(save.getUser().getUsername());
         return answer;
     }
 
@@ -136,6 +137,7 @@ public class AnswerService {
             newDTO.setParentQuestionId(a.getParentQuestion().getId());
             newDTO.setDate(format(a.getDate()));
             newDTO.setAccepted(a.isAccepted());
+            newDTO.setUserName(a.getUser().getUsername());
             answerDTOs.add(newDTO);
         }
         return answerDTOs;

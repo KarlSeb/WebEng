@@ -29,8 +29,9 @@ public class QuestionDTO {
     @NotEmpty
     private long userId;
 
-    private int answerCount;
+    private String userName;
 
+    private int answerCount;
 
     public long getId() {
         return id;
@@ -87,4 +88,8 @@ public class QuestionDTO {
     public void setAnswerCount(int answerCount) {
         this.answerCount = answerCount;
     }
+
+    public String getUserName() {return userName;}
+
+    public void setUserName(String userName) {this.userName = userName;}
 }
