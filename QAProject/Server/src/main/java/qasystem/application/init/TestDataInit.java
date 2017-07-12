@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import qasystem.QAProjectApplication;
 import qasystem.application.service.QuestionService;
@@ -35,10 +36,12 @@ public class TestDataInit implements CommandLineRunner{
     private static final Logger log = LoggerFactory.getLogger(QAProjectApplication.class);
     private final Environment env;
     private final QuestionService questionService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public TestDataInit(UserRepository urepo, GenericController genericController, QuestionRepository qrepo,
-                        AnswerRepository arepo, Environment env, QuestionController questionController, QuestionService questionService) {
+                        AnswerRepository arepo, Environment env, QuestionController questionController, QuestionService questionService,
+                        PasswordEncoder passwordencoder) {
         this.urepo = urepo;
         this.genericController = genericController;
         this.qrepo = qrepo;
@@ -46,6 +49,7 @@ public class TestDataInit implements CommandLineRunner{
         this.env = env;
         this.questionController = questionController;
         this.questionService = questionService;
+        this.passwordEncoder = passwordencoder;
     }
 
     /**
@@ -61,27 +65,34 @@ public class TestDataInit implements CommandLineRunner{
                     + "Allowed values for 'testdataOn' in the config.properties file are on/off, yes/no, true/false");
             return;
         }
-        User jack = new User("jack","jackspw");
+        String jackspw = "jackspw";
+        User jack = new User("jack", passwordEncoder.encode(jackspw));
         urepo.save(jack);
-        log.info("Saving user jack. Username: " + jack.getUsername() + " , password: " + jack.getPassword());
-        User chloe = new User("chloe","chloespw");
+        log.info("Saving user jack. Username: " + jack.getUsername() + " , password: " + jackspw);
+        String chloespw = "chloespw";
+        User chloe = new User("chloe", passwordEncoder.encode(chloespw));
         urepo.save(chloe);
-        log.info("Saving user chloe. Username: " + chloe.getUsername() + " , password: " + chloe.getPassword());
-        User kim = new User("kim","kimspw");
+        log.info("Saving user chloe. Username: " + chloe.getUsername() + " , password: " + chloespw);
+        String kimspw = "kimspw";
+        User kim = new User("kim", passwordEncoder.encode(kimspw));
         urepo.save(kim);
-        log.info("Saving user kim. Username: " + kim.getUsername() + " , password: " + kim.getPassword());
-        User david = new User("david","davidspw");
+        log.info("Saving user kim. Username: " + kim.getUsername() + " , password: " + kimspw);
+        String davidspw = "davidspw";
+        User david = new User("david", passwordEncoder.encode(davidspw));
         urepo.save(david);
-        log.info("Saving user david. Username: " + david.getUsername() + " , password: " + david.getPassword());
-        User michelle = new User("michelle","michellespw");
+        log.info("Saving user david. Username: " + david.getUsername() + " , password: " + davidspw);
+        String michellespw = "michellespw";
+        User michelle = new User("michelle", passwordEncoder.encode(michellespw));
         urepo.save(michelle);
-        log.info("Saving user michelle. Username: " + michelle.getUsername() + " , password: " + michelle.getPassword());
-        User bob = new User("bob","bobspw");
+        log.info("Saving user michelle. Username: " + michelle.getUsername() + " , password: " + michellespw);
+        String bobspw = "bobspw";
+        User bob = new User("bob", passwordEncoder.encode(bobspw));
         urepo.save(bob);
-        log.info("Saving user bob. Username: " + bob.getUsername() + " , password: " + bob.getPassword());
-        User fred = new User("fred","fredspw");
+        log.info("Saving user bob. Username: " + bob.getUsername() + " , password: " + bobspw);
+        String fredspw = "fredspw";
+        User fred = new User("fred", passwordEncoder.encode(fredspw));
         urepo.save(fred);
-        log.info("Saving user fred. Username: " + fred.getUsername() + " , password: " + fred.getPassword());
+        log.info("Saving user fred. Username: " + fred.getUsername() + " , password: " + fredspw);
         
         Question q1 = new Question("title1", "question1?", jack);
         qrepo.save(q1);
