@@ -2,6 +2,8 @@ package qasystem.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import qasystem.application.service.AnswerService;
 import qasystem.application.service.QuestionService;
@@ -105,8 +107,8 @@ public class QuestionController {
      */
     @PutMapping(value = "/{id:[1-9]+}/answers/{aId:[1-9]+}")
     @ResponseStatus(HttpStatus.OK)
-    public void acceptAnswer(@PathVariable("id") String id, @PathVariable("aId") String aId){
-        answerService.acceptAnswer(id, aId);
+    public void acceptAnswer(@PathVariable("id") String id, @PathVariable("aId") String aId, @AuthenticationPrincipal User user){
+        answerService.acceptAnswer(id, aId, user);
     }
 
     //=======DELETE-MAPPING=======

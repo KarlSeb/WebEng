@@ -61,4 +61,13 @@ public class UserService {
     public List<QuestionDTO> getAllQuestionsUserAnswered(String id) {
         return questionService.findAllQuestionsByAnswerContainsUserId(id);
     }
+
+
+    public User getUserByAuthenticationPrinciple(org.springframework.security.core.userdetails.User user) {
+        User foundUser = userRepository.findByUsername(user.getUsername());
+        if(foundUser != null && foundUser.getPassword().equals(user.getPassword()))
+            return foundUser;
+        else
+            return null;
+    }
 }

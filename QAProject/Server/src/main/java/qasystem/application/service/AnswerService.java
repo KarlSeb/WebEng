@@ -1,5 +1,6 @@
 package qasystem.application.service;
 
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import qasystem.persistence.entities.User;
 import qasystem.persistence.repositories.AnswerRepository;
 import qasystem.web.dtos.AnswerDTO;
 
+import java.security.acl.NotOwnerException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.GregorianCalendar;
@@ -65,11 +67,21 @@ public class AnswerService {
      * @param aId EIndeutiger Identifikator der Antwort
      */
     @Secured("ROLE_USER")
-    //TODO umschreiben nachdem @AuthentificationPrincipal steht.
-    public void acceptAnswer(String id, String aId) {
+    public void acceptAnswer(String id, String aId, org.springframework.security.core.userdetails.User user) {
         if(id == null||aId == null){
             throw new IllegalArgumentException("The Ids cannot be null! Given QuestionId: "+id+", given AnswerId: "+aId);
         }
+        User foundUser = userService.getUserByAuthenticationPrinciple(user);
+        if (foundUser == null) throw new SecurityException("User that tried to take this action was not found in Database.");
+        Long lQuestionId = Long.parseLong(id);
+        boolean allowed = false;
+        for (Question q : foundUser.getQuestions()) {
+            if (q.getId() == lQuestionId) {
+                allowed = true;
+                break;
+            }
+        }
+        if (!allowed) throw new SecurityException("This User is not allowed to take that action.");
         questionService.setQuestionToAnswered(id, true);
         Long lAnswerId = Long.parseLong(aId);
         answerRepository.updateAccepted(lAnswerId, true);
