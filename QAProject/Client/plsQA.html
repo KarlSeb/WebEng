@@ -30,7 +30,7 @@
                 <h1>All Qs</h1>
                 <ul>
                     <question v-for="q in all_questions" :q="q" :id="q.id" :text="q.text" :title="q.title"
-                              :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"
+                              :date="q.date" :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
                               @removedquestion="getAllQs"></question>
                 </ul>
             </tab>
@@ -38,7 +38,7 @@
                 <h1>Unanswerd Qs</h1>
                 <ul>
                     <question v-for="q in unanswered_questions" :q="q" :id="q.id" :text="q.text" :title="q.title"
-                              :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"
+                              :date="q.date" :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
                               @removedquestion="getAllQs"></question>
                 </ul>
             </tab>
@@ -46,7 +46,7 @@
                 <h1>Unsolved Qs</h1>
                 <ul>
                     <question v-for="q in unsolved_questions" :q="q" :id="q.id" :text="q.text" :title="q.title"
-                              :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"
+                              :date="q.date" :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
                               @removedquestion="getAllQs"></question>
                 </ul>
             </tab>
@@ -54,7 +54,7 @@
                 <h1>Qs i answered</h1>
                 <ul>
                     <question v-for="q in qs_i_answered" :q="q" :id="q.id" :text="q.text" :title="q.title"
-                              :date="q.date" :answered="q.answered" :user_id="q.user" :loggedin="logged_in"
+                              :date="q.date" :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
                               @removedquestion="getAllQs"></question>
                 </ul>
             </tab>
@@ -62,7 +62,7 @@
                 <h1>My Qs</h1>
                 <ul>
                     <question v-for="q in my_qs" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date"
-                              :answered="q.answered" :user_id="q.user" :loggedin="logged_in"
+                              :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
                               @removedquestion="getAllQs"></question>
                 </ul>
             </tab>
@@ -125,7 +125,8 @@
                             <div class="panel-heading">Q-Text</div>
                             <div class="panel-body">
                                 <textarea class="form-control" placeholder="Question" rows="10"
-                                          v-model="newQuestion.text"></textarea>
+                                          v-model="newQuestion.text">
+                                </textarea>
                             </div>
                         </div>
                     </div>
@@ -184,8 +185,29 @@
                     </div>
                     <div class="modal-body">
                         <answer v-for="a in currentQuestion.answers" :a="a" :id="a.id" :text="a.text"
-                                  :date="a.date" :accepted="a.accepted" :user_id="a.userId" :parent_question_id="a.parentQuestionId"
-                                  @removedquestion="getAllQs"></answer>
+                                  :date="a.date" :accepted="a.accepted" :user_id="a.userId"
+                                  @removedquestion="getAllQs">#
+                        </answer>
+                        <div class="panel panel-default" v-if="logged_in">
+                            <div class="panel-heading" role="tab" id="headingNewAnswer" data-toggle="collapse" data-parent="#accordion" href="#collapseNewAnswer" aria-expanded="false" aria-controls="collapseNewAnswer">
+                                <h4 class="panel-title">
+                                        Add new A
+                                </h4>
+                            </div>
+                            <div id="collapseNewAnswer" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNewAnswer">
+                                <div class="panel-body">
+                                    <textarea class="form-control" placeholder="Answer" rows="10"
+                                              v-model="newAnswer.text">
+                                </textarea>
+
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="text-right">
+                                        <button type="button" class="btn btn-primary">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group" role="group" v-if="showQuestionControl(currentQuestion)">
@@ -195,10 +217,6 @@
                         <div v-if="!showQuestionControl(currentQuestion)">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
-
-
-
-
                     </div>
                 </div>
             </div>
@@ -238,8 +256,8 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col-md-8">
-                    <h2>{{q.title | truncate(15)}}</h2>
-                    <h4>{{q.user}}</h4>
+                    <h2> <span class="badge">{{q.answerCount}}</span> {{q.title | truncate(15)}}</h2>
+                    <h4>{{q.userName}}</h4>
                 </div>
 
                 <div class="col-md-4">
@@ -391,10 +409,13 @@
             q: '',
             id: {default: -1},
             answered: {default: false},
+            answer_count: {required: true},
             date: {required: true},
             text: {required: true},
             title: {required: true},
             user_id: {required: true},
+            username: {required: true},
+            usern1: {default: 'helo'},
             loggedin: {default: false}
 
         },
@@ -410,6 +431,7 @@
                 this.getAsToQ(this.id);
                 app.currentQuestion.id = this.id;
                 app.currentQuestion.title = this.title;
+                app.currentQuestion.user_name = this.username;
                 app.currentQuestion.text = this.text;
                 app.currentQuestion.user_id = this.user_id;
                 app.currentQuestion.answered = this.answered;
@@ -418,6 +440,10 @@
                 $.getJSON('http://localhost:8080/questions/' + this.id + '/answers', function (res) {
                     app.currentQuestion.answers = res;
                 });
+            },
+            showAc: function () {
+                alert("helllo");
+                return 5
             }
         }
     });
@@ -431,7 +457,6 @@
             date: {required: true},
             text: {required: true},
             user_id: {required: true},
-            parent_question_id: {required: true}
 
         },
         methods: {
@@ -461,7 +486,7 @@
                 alert("accept answer with ID"+answer.id)
             },
             showQuestionControlA: function () {
-                return (this.parent_question_id == app.userDTO.id) && app.logged_in
+                return (app.currentQuestion.user_id == app.userDTO.id) && app.logged_in
             }
         }
     });
@@ -484,6 +509,7 @@
             currentQuestion: {
                 id: '',
                 title: '',
+                user_name: '',
                 text: '',
                 answered:'',
                 answers: [],
