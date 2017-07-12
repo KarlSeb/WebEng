@@ -188,11 +188,11 @@
                                   @removedquestion="getAllQs"></answer>
                     </div>
                     <div class="modal-footer">
-                        <div class="btn-group" role="group" v-if="showDelete(currentQuestion)">
+                        <div class="btn-group" role="group" v-if="showQuestionControl(currentQuestion)">
                             <button  type="button" class="btn btn-danger"  @click="remove_question(currentQuestion)">DELETE Q</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
-                        <div v-if="!showDelete(currentQuestion)">
+                        <div v-if="!showQuestionControl(currentQuestion)">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
 
@@ -280,15 +280,20 @@
                 </div>
                 <div class="col-md-9">
                     <div class="row">
-                        <div class="col-md-4">
-                            <div v-if="showDelete(a.user_id)">
-                                <button  type="button" class="btn btn-danger"  @click="remove_answer(a)">DELETE A</button>
+                        <div class="col-md-3">
+                            <div v-if="showQuestionControlA">
+                                <button  type="button" class="btn btn-success btn-block"  @click="accept_answer(a)">ACCEPT A</button>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
+                            <div v-if="showAnswerDelete()">
+                                <button  type="button" class="btn btn-danger btn-block"  @click="remove_answer(a)">DELETE A</button>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <h6>Geantwortet am: </span></h6>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <h6>{{a.date}}</h6>
                         </div>
                     </div>
@@ -366,9 +371,11 @@
         }
     });
 
+
     Vue.filter('uppercase', function (input) {
         return input.toUpperCase();
     });
+
     Vue.filter('truncate', function (string, value) {
         if (string.length < value) {
             return string
@@ -376,6 +383,7 @@
             return string.substring(0, value) + '...';
         }
     });
+
 
     Vue.component('question', {
         template: '#template-questions',
@@ -426,7 +434,7 @@
 
         },
         methods: {
-            showDelete: function () {
+            showAnswerDelete: function () {
                 return (this.user_id == app.userDTO.id) && app.logged_in
             },
             remove_answer: function (answer) {
@@ -439,6 +447,20 @@
                  }.bind(this)
                  });*/
                 alert("remove answer with ID"+answer.id)
+            },
+            accept_answer: function (answer) {
+                /*$.ajax({
+                 url: 'http://localhost:8080/todos/' + todo.pid,
+                 type: 'DELETE',
+                 xhrFields: {withCredentials: true},
+                 success: function () {
+                 this.$emit('removedquestion');
+                 }.bind(this)
+                 });*/
+                alert("accept answer with ID"+answer.id)
+            },
+            showQuestionControlA: function () {
+                return (question.user_id == this.userDTO.id) && this.logged_in
             }
         }
     });
@@ -451,6 +473,10 @@
             unsolved_questions: [],
             qs_i_answered: [],
             newQuestion: {
+                title: '',
+                text: ''
+            },
+            newAnswer: {
                 title: '',
                 text: ''
             },
@@ -600,7 +626,7 @@
                     app.unsolved_questions = res;
                 });
             },
-            showDelete: function (question) {
+            showQuestionControl: function (question) {
                 return (question.user_id == this.userDTO.id) && this.logged_in
             },
             remove_question: function (question) {
