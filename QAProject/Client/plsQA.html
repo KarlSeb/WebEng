@@ -528,7 +528,8 @@
                         type: 'HEAD',
                         xhrFields: {withCredentials: true},
                         headers: {
-                            "Authorization": "Basic " + btoa(this.userDTO.userName+ ":" +this.userDTO.password)
+                            "Authorization": "Basic " + btoa(this.userDTO.userName+ ":" +this.userDTO.password),
+                            "X-Requested-With": "XMLHttpRequest"
                         },
                         success: function () {
                             this.logged_in = true;
