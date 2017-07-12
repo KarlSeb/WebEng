@@ -9,7 +9,9 @@ import qasystem.persistence.entities.User;
 import qasystem.persistence.repositories.QuestionRepository;
 import qasystem.web.dtos.QuestionDTO;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -105,7 +107,7 @@ public class QuestionService {
             newDTO.setId(q.getId());
             newDTO.setTitle(q.getTitle());
             newDTO.setText(q.getText());
-            newDTO.setDate(q.getDate().toString());
+            newDTO.setDate(format(q.getDate()));
             newDTO.setUser(q.getUser().getId());
             newDTO.setAnswerCount(q.getAnswers().size());
             newDTO.setAnswered(q.isAnswered());
@@ -141,7 +143,7 @@ public class QuestionService {
         question.setText(saved.getText());
         question.setUser(saved.getUser().getId());
         question.setAnswered(saved.isAnswered());
-        question.setDate(saved.getDate().toString());
+        question.setDate(format(saved.getDate()));
         question.setAnswerCount(saved.getAnswers().size());
         return question;
     }
@@ -189,5 +191,12 @@ public class QuestionService {
     List<QuestionDTO> findAllQuestionsByAnswerContainsUserId(String id) {
         Long lUserId = Long.parseLong(id);
         return convertListToDTOs(questionRepository.findAllByAnswersContainsUserId(lUserId));
+    }
+
+    private static String format(GregorianCalendar calendar){
+        SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        fmt.setCalendar(calendar);
+        String dateFormatted = fmt.format(calendar.getTime());
+        return dateFormatted;
     }
 }

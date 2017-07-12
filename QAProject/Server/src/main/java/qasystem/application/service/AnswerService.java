@@ -9,7 +9,9 @@ import qasystem.persistence.entities.User;
 import qasystem.persistence.repositories.AnswerRepository;
 import qasystem.web.dtos.AnswerDTO;
 
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -99,7 +101,7 @@ public class AnswerService {
         AnswerDTO answer = new AnswerDTO();
         answer.setId(save.getId());
         answer.setAccepted(save.isAccepted());
-        answer.setDate(save.getDate().toString());
+        answer.setDate(format(save.getDate()));
         answer.setParentQuestionId(save.getParentQuestion().getId());
         answer.setText(save.getText());
         answer.setUserId(save.getUser().getId());
@@ -132,7 +134,7 @@ public class AnswerService {
             newDTO.setText(a.getText());
             newDTO.setUserId(a.getUser().getId());
             newDTO.setParentQuestionId(a.getParentQuestion().getId());
-            newDTO.setDate(a.getDate().toString());
+            newDTO.setDate(format(a.getDate()));
             newDTO.setAccepted(a.isAccepted());
             answerDTOs.add(newDTO);
         }
@@ -143,5 +145,12 @@ public class AnswerService {
     Collection<Answer> getAllAnswersByUserId(String id) {
          Long lUserId = Long.parseLong(id);
          return answerRepository.findAllByUser(lUserId);
+    }
+
+    private static String format(GregorianCalendar calendar){
+        SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        fmt.setCalendar(calendar);
+        String dateFormatted = fmt.format(calendar.getTime());
+        return dateFormatted;
     }
 }
