@@ -61,7 +61,11 @@ public class QuestionService {
      * @return Die Frage als DTO
      */
     @Secured("ROLE_USER")
+    //TODO umschreiben nachdem @AuthentificationPrincipal steht.
     public QuestionDTO createQuestion(QuestionDTO newQuestion) {
+        if(newQuestion==null){
+            throw new IllegalArgumentException("Given Question was null");
+        }
         final Question question = convertDTOToQuestion(newQuestion);
         return convertQuestionToDTO(questionRepository.save(question));
     }
@@ -75,6 +79,7 @@ public class QuestionService {
      */
     @Secured("ROLE_USER")
     public void deleteQuestion(String id, String uId) {
+        //TODO umschreiben nachdem @AuthentificationPrincipal steht.
         Long lId = Long.parseLong(id);
         Long lUId = Long.parseLong(uId);
         Question toDelete = questionRepository.findOne(lId);
@@ -84,7 +89,6 @@ public class QuestionService {
         }
         Collection<Answer> answersToQuestion = new LinkedList<>();
         questionRepository.delete(lId);
-        //TODO Prüfen ob diese nötig ist und evtl. wieder entfernen bzw. parallel zum Löschen der Frage.
         answersToQuestion.addAll(toDelete.getAnswers());
         answerService.deleteAnswerList(answersToQuestion);
     }
@@ -158,6 +162,9 @@ public class QuestionService {
      *                 False, falls die Frage noch zu benatworten ist.
      */
     void setQuestionToAnswered(String id, boolean answered) {
+        if(id==null){
+            throw new IllegalArgumentException("Given QuestionId was null!");
+        }
         Long lQuestionId = Long.parseLong(id);
         questionRepository.updateAnswered(lQuestionId, answered);
     }
@@ -169,6 +176,9 @@ public class QuestionService {
      * @return Die Frage mit der entsprechenden Id
      */
     Question getQuestionById(String id) {
+        if (id== null){
+            throw new IllegalArgumentException("Given QuestionId was null");
+        }
         Long lQuestionId = Long.parseLong(id);
         return questionRepository.findOne(lQuestionId);
     }
@@ -180,6 +190,9 @@ public class QuestionService {
      * @return Alle Fragen, die der Benutzer gestellt hat
      */
     Collection<Question> findAllByUserId(String id) {
+        if (id== null){
+            throw new IllegalArgumentException("Given UserId was null");
+        }
         Long lUserId = Long.parseLong(id);
         return questionRepository.findAllByUserId(lUserId);
     }
@@ -191,6 +204,9 @@ public class QuestionService {
      * @return Liste aller Fragen, auf die der Benutzer mit {@code id} geantwortet hat.
      */
     List<QuestionDTO> findAllQuestionsByAnswerContainsUserId(String id) {
+        if (id== null){
+            throw new IllegalArgumentException("Given UserId was null");
+        }
         Long lUserId = Long.parseLong(id);
         return convertListToDTOs(questionRepository.findAllByAnswersContainsUserId(lUserId));
     }
