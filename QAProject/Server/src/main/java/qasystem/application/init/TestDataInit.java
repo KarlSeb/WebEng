@@ -110,7 +110,7 @@ public class TestDataInit implements CommandLineRunner{
         fred.setRoles(userRoles);
         urepo.save(fred);
         log.info("Saving user fred. Username: " + fred.getUsername() + " , password: " + fredspw);
-        
+
         Question q1 = new Question("title1", "question1?", jack);
         qrepo.save(q1);
         log.info("Saving question q1. Title: " + q1.getTitle() + " , user: " + q1.getUser().getUsername());
@@ -120,7 +120,9 @@ public class TestDataInit implements CommandLineRunner{
         Question q3 = new Question("title3", "question3?", bob);
         qrepo.save(q3);
         log.info("Saving question q3. Title: " + q3.getTitle() + " , user: " + q3.getUser().getUsername());
-        Question q4 = new Question("title4", "question4?", jack);
+        String longString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sodales tortor massa, " +
+                "vitae faucibus tortor rhoncus et. Morbi auctor in nulla sed bibendum. Aliquam mattis rhoncus nulla at suscipit.";
+        Question q4 = new Question(longString.substring(0,40), longString, jack);
         qrepo.save(q4);
         log.info("Saving question q4. Title: " + q4.getTitle() + " , user: " + q4.getUser().getUsername());
 
