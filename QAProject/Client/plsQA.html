@@ -184,7 +184,7 @@
                     </div>
                     <div class="modal-body">
                         <answer v-for="a in currentQuestion.answers" :a="a" :id="a.id" :text="a.text"
-                                  :date="a.date" :accepted="a.accepted" :user_id="a.userId"
+                                  :date="a.date" :accepted="a.accepted" :user_id="a.userId" :parent_question_id="a.parentQuestionId"
                                   @removedquestion="getAllQs"></answer>
                     </div>
                     <div class="modal-footer">
@@ -281,7 +281,7 @@
                 <div class="col-md-9">
                     <div class="row">
                         <div class="col-md-3">
-                            <div v-if="showQuestionControlA">
+                            <div v-if="showQuestionControlA()">
                                 <button  type="button" class="btn btn-success btn-block"  @click="accept_answer(a)">ACCEPT A</button>
                             </div>
                         </div>
@@ -431,6 +431,7 @@
             date: {required: true},
             text: {required: true},
             user_id: {required: true},
+            parent_question_id: {required: true}
 
         },
         methods: {
@@ -460,7 +461,7 @@
                 alert("accept answer with ID"+answer.id)
             },
             showQuestionControlA: function () {
-                return (question.user_id == this.userDTO.id) && this.logged_in
+                return (this.parent_question_id == app.userDTO.id) && app.logged_in
             }
         }
     });
@@ -563,6 +564,8 @@
             logout: function () {
 
                 this.logged_in = false;
+                this.userDTO.password = '';
+                this.userDTO.userName = '';
             },
             discardQ: function () {
                 this.newQuestion.text = '';
