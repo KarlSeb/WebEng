@@ -17,6 +17,8 @@ public class Answer {
     @JoinColumn(name="question.id")
     private Question parentQuestion;
 
+    @Lob
+    @Column
     private String text;
 
     private GregorianCalendar date;

@@ -1,6 +1,8 @@
 package qasystem.web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,8 +30,8 @@ public class UserController {
      * @return Liste aller Fragen, die der Benutzer mit entsprechender {@code id}, gestellt hat.
      */
     @GetMapping(value = "/{id:[1-9]+}/questions")
-    public List<QuestionDTO> getAllQuestionsOfUser(@PathVariable("id") String id){
-        return userService.getAllQuestionsOfUser(id);
+    public List<QuestionDTO> getAllQuestionsOfUser(@PathVariable("id") String id, @AuthenticationPrincipal User user){
+        return userService.getAllQuestionsOfUser(id, user);
     }
 
     /**
@@ -39,8 +41,8 @@ public class UserController {
      * @return Liste aller Antworten, die der Benutzer mit entsprechender {@code id}, gegeben hat.
      */
     @GetMapping(value = "/{id:[1-9]+}/answers")
-    public List<AnswerDTO> getAllAnswersOfUser(@PathVariable("id") String id){
-        return userService.getAllAnswersOfUser(id);
+    public List<AnswerDTO> getAllAnswersOfUser(@PathVariable("id") String id, @AuthenticationPrincipal User user){
+        return userService.getAllAnswersOfUser(id, user);
     }
 
     /**
@@ -50,7 +52,7 @@ public class UserController {
      * @return Liste aller Fragen, auf die der Benutzer mit {@code id} geantwortet hat
      */
     @GetMapping("/{id:[1-9]+}/answeredQuestions")
-    public List<QuestionDTO> getAllQuestionsUserAnswered(@PathVariable("id") String id){
-        return userService.getAllQuestionsUserAnswered(id);
+    public List<QuestionDTO> getAllQuestionsUserAnswered(@PathVariable("id") String id, @AuthenticationPrincipal User user){
+        return userService.getAllQuestionsUserAnswered(id, user);
     }
 }

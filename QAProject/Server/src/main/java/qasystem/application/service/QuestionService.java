@@ -2,10 +2,10 @@ package qasystem.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import qasystem.persistence.entities.Answer;
 import qasystem.persistence.entities.Question;
-import qasystem.persistence.entities.User;
 import qasystem.persistence.repositories.QuestionRepository;
 import qasystem.web.dtos.QuestionDTO;
 
@@ -61,11 +61,12 @@ public class QuestionService {
      * @return Die Frage als DTO
      */
     @Secured("ROLE_USER")
-    //TODO umschreiben nachdem @AuthentificationPrincipal steht.
-    public QuestionDTO createQuestion(QuestionDTO newQuestion) {
+    public QuestionDTO createQuestion(QuestionDTO newQuestion, User user ) {
         if(newQuestion==null){
             throw new IllegalArgumentException("Given Question was null");
         }
+        qasystem.persistence.entities.User foundUser = userService.getUserByAuthenticationPrinciple(user);
+        newQuestion.setUser(foundUser.getId());
         final Question question = convertDTOToQuestion(newQuestion);
         return convertQuestionToDTO(questionRepository.save(question));
     }
@@ -75,18 +76,13 @@ public class QuestionService {
      * User, der mittels {@code uId} identifiziert wird, der Ersteller der Frage ist.
      *
      * @param id  Eindeutiger Identifikator für die Frage
-     * @param uId Eindeutiger Identifikator für die Frage
+     * @param user Benutzer, der die Frage löschen möchte
      */
     @Secured("ROLE_USER")
-    public void deleteQuestion(String id, String uId) {
-        //TODO umschreiben nachdem @AuthentificationPrincipal steht.
+    public void deleteQuestion(String id, User user) {
+        authenticateUserForQuestion(id, user);
         Long lId = Long.parseLong(id);
-        Long lUId = Long.parseLong(uId);
         Question toDelete = questionRepository.findOne(lId);
-        if (toDelete.getUser().getId() != lUId) {
-            //TODO evtl. mit Spring Security schöner lösen
-            throw new IllegalArgumentException("The UserIds don´t match");
-        }
         Collection<Answer> answersToQuestion = new LinkedList<>();
         questionRepository.delete(lId);
         answersToQuestion.addAll(toDelete.getAnswers());
@@ -128,7 +124,7 @@ public class QuestionService {
      * @return Die Frage, die die Infos aus dem DTO enthält.
      */
     private Question convertDTOToQuestion(QuestionDTO question) {
-        User user = userService.getUserById(question.getUser());
+        qasystem.persistence.entities.User user = userService.getUserById(question.getUser());
         return new Question(question.getTitle(), question.getText(), user);
     }
 
@@ -211,8 +207,21 @@ public class QuestionService {
         return convertListToDTOs(questionRepository.findAllByAnswersContainsUserId(lUserId));
     }
 
+    void authenticateUserForQuestion(String questionId, User user) {
+        qasystem.persistence.entities.User foundUser = userService.getUserByAuthenticationPrinciple(user);
+        Long lQuestionId = Long.parseLong(questionId);
+        boolean allowed = false;
+        for (Question q : foundUser.getQuestions()) {
+            if (q.getId() == lQuestionId) {
+                allowed = true;
+                break;
+            }
+        }
+        if (!allowed) throw new SecurityException("This User is not allowed to take that action.");
+    }
+
     private static String format(GregorianCalendar calendar){
-        SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        SimpleDateFormat fmt = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
         fmt.setCalendar(calendar);
         String dateFormatted = fmt.format(calendar.getTime());
         return dateFormatted;

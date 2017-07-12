@@ -1,14 +1,16 @@
 package qasystem.application.service;
 
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import qasystem.persistence.entities.Answer;
 import qasystem.persistence.entities.Question;
-import qasystem.persistence.entities.User;
+import org.springframework.security.core.userdetails.User;
 import qasystem.persistence.repositories.AnswerRepository;
 import qasystem.web.dtos.AnswerDTO;
 
+import java.security.acl.NotOwnerException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.GregorianCalendar;
@@ -46,14 +48,13 @@ public class AnswerService {
      * @return AnswerDTO, das die zusätzlichen, automatisch generierten Daten enthält.
      */
     @Secured("ROLE_USER")
-    //TODO umschreiben nachdem @AuthentificationPrincipal steht.
-    public AnswerDTO answerQuestion(String id, AnswerDTO answerDTO) {
+    public AnswerDTO answerQuestion(String id, AnswerDTO answerDTO, User user) {
         Question parentQuestion = questionService.getQuestionById(id);
-        User u = userService.getUserById(answerDTO.getUserId());
-        if(parentQuestion==null||u==null){
+        if(parentQuestion==null){
             return new AnswerDTO();
         }
-        Answer newAnswer = new Answer(parentQuestion, answerDTO.getText(), u);
+        qasystem.persistence.entities.User foundUser = userService.getUserByAuthenticationPrinciple(user);
+        Answer newAnswer = new Answer(parentQuestion, answerDTO.getText(), foundUser);
         return convertAnswerToDTO(answerRepository.save(newAnswer));
     }
 
@@ -63,13 +64,14 @@ public class AnswerService {
      *
      * @param id Eindeutiger Identifikator der Frage
      * @param aId EIndeutiger Identifikator der Antwort
+     * @param user Der User, der die Antwort akzeptieren will
      */
     @Secured("ROLE_USER")
-    //TODO umschreiben nachdem @AuthentificationPrincipal steht.
-    public void acceptAnswer(String id, String aId) {
+    public void acceptAnswer(String id, String aId, User user) {
         if(id == null||aId == null){
             throw new IllegalArgumentException("The Ids cannot be null! Given QuestionId: "+id+", given AnswerId: "+aId);
         }
+        questionService.authenticateUserForQuestion(id, user);
         questionService.setQuestionToAnswered(id, true);
         Long lAnswerId = Long.parseLong(aId);
         answerRepository.updateAccepted(lAnswerId, true);
@@ -81,12 +83,14 @@ public class AnswerService {
      *
      * @param id Eindeutiger Identifikator der Frage
      * @param aId Eindeutiger Identifikator der Antwort
-     * @param uId Eindeutiger Identifikator des Benutzers
+     * @param user Benutzer, der die Antwort löschen will
      */
     @Secured("ROLE_USER")
-    //TODO umschreiben nachdem @AuthentificationPrincipal steht.
-    public void deleteAnswer(String id, String aId, String uId) {
-        //TODO Benutzer überprüfen
+    public void deleteAnswer(String id, String aId, User user) {
+        if(id == null||aId == null){
+            throw new IllegalArgumentException("The Ids cannot be null! Given QuestionId: "+id+", given AnswerId: "+aId);
+        }
+        authenticateUserForAnswer(id, user);
         Long lAnswerId = Long.parseLong(aId);
         Answer toDelete = answerRepository.findOne(lAnswerId);
         if (toDelete.isAccepted()){
@@ -163,8 +167,21 @@ public class AnswerService {
          return answerRepository.findAllByUser(lUserId);
     }
 
+    void authenticateUserForAnswer(String answerId, User user) {
+        qasystem.persistence.entities.User foundUser = userService.getUserByAuthenticationPrinciple(user);
+        Long lAnswerId = Long.parseLong(answerId);
+        boolean allowed = false;
+        for (Answer a : foundUser.getAnswers()) {
+            if (a.getId() == lAnswerId) {
+                allowed = true;
+                break;
+            }
+        }
+        if (!allowed) throw new SecurityException("This User is not allowed to take that action.");
+    }
+
     private static String format(GregorianCalendar calendar){
-        SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+        SimpleDateFormat fmt = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
         fmt.setCalendar(calendar);
         String dateFormatted = fmt.format(calendar.getTime());
         return dateFormatted;

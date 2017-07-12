@@ -36,7 +36,8 @@ public class UserService {
      * @return Liste aller Fragen, die von einem Nutzer gestellt wurden, als DTOs
      */
     @Secured("ROLE_USER")
-    public List<QuestionDTO> getAllQuestionsOfUser(String id) {
+    public List<QuestionDTO> getAllQuestionsOfUser(String id, org.springframework.security.core.userdetails.User user) {
+        authenticateUser(id, user);
         return questionService.convertListToDTOs(questionService.findAllByUserId(id));
     }
 
@@ -47,7 +48,8 @@ public class UserService {
      * @return Liste aller Antworten, die ein bestimmeter Nutzer gegeben hat, als DTOs
      */
     @Secured("ROLE_USER")
-    public List<AnswerDTO> getAllAnswersOfUser(String id) {
+    public List<AnswerDTO> getAllAnswersOfUser(String id, org.springframework.security.core.userdetails.User user) {
+        authenticateUser(id, user);
         return answerService.convertListToDTOs(answerService.getAllAnswersByUserId(id));
     }
 
@@ -58,7 +60,23 @@ public class UserService {
      * @return Liste aller Fragen, auf die der Benutzer mit {@code id} geantwortet hat.
      */
     @Secured("ROLE_USER")
-    public List<QuestionDTO> getAllQuestionsUserAnswered(String id) {
+    public List<QuestionDTO> getAllQuestionsUserAnswered(String id, org.springframework.security.core.userdetails.User user) {
+        authenticateUser(id, user);
         return questionService.findAllQuestionsByAnswerContainsUserId(id);
+    }
+
+
+    User getUserByAuthenticationPrinciple(org.springframework.security.core.userdetails.User user) {
+        User foundUser = userRepository.findByUsername(user.getUsername());
+        if(foundUser != null && foundUser.getPassword().equals(user.getPassword()))
+            return foundUser;
+        else
+            throw new SecurityException("User that tried to take this action was not found in Database.");
+    }
+
+    private void authenticateUser(String id, org.springframework.security.core.userdetails.User user) {
+        User foundUser = getUserByAuthenticationPrinciple(user);
+        if (foundUser.getId() != Long.parseLong(id))
+            throw new SecurityException("This User is not allowed to take that action.");
     }
 }

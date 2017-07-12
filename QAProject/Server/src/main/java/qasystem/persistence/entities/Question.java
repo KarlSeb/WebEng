@@ -15,8 +15,12 @@ public class Question {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
 
+    @Lob
+    @Column
     private String title;
 
+    @Lob
+    @Column
     private String text;
 
     private GregorianCalendar date;
