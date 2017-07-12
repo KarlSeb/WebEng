@@ -35,6 +35,9 @@ public class MyUserDetailsService implements UserDetailsService {
     }
 
     private Set<GrantedAuthority> getAuthorities(User user){
+        if(user == null){
+            return new HashSet<>();
+        }
         Set<GrantedAuthority> authorities = new HashSet<>();
         for(Role role : user.getRoles()) {
             GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_" + role.getRole());

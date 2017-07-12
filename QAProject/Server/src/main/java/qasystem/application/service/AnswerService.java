@@ -31,6 +31,9 @@ public class AnswerService {
      * @return Liste aller Antworten, die der Frage mit {@code id} zugeordnet sind.
      */
     public List<AnswerDTO> getAllAnswersByQuestionId(String id) {
+        if(id==null){
+            return new LinkedList<>();
+        }
         Long lQuestionId = Long.parseLong(id);
         return convertListToDTOs(answerRepository.findAllByParentQuestion(lQuestionId));
     }
@@ -43,6 +46,7 @@ public class AnswerService {
      * @return AnswerDTO, das die zusätzlichen, automatisch generierten Daten enthält.
      */
     @Secured("ROLE_USER")
+    //TODO umschreiben nachdem @AuthentificationPrincipal steht.
     public AnswerDTO answerQuestion(String id, AnswerDTO answerDTO) {
         Question parentQuestion = questionService.getQuestionById(id);
         User u = userService.getUserById(answerDTO.getUserId());
@@ -61,7 +65,11 @@ public class AnswerService {
      * @param aId EIndeutiger Identifikator der Antwort
      */
     @Secured("ROLE_USER")
+    //TODO umschreiben nachdem @AuthentificationPrincipal steht.
     public void acceptAnswer(String id, String aId) {
+        if(id == null||aId == null){
+            throw new IllegalArgumentException("The Ids cannot be null! Given QuestionId: "+id+", given AnswerId: "+aId);
+        }
         questionService.setQuestionToAnswered(id, true);
         Long lAnswerId = Long.parseLong(aId);
         answerRepository.updateAccepted(lAnswerId, true);
@@ -76,6 +84,7 @@ public class AnswerService {
      * @param uId Eindeutiger Identifikator des Benutzers
      */
     @Secured("ROLE_USER")
+    //TODO umschreiben nachdem @AuthentificationPrincipal steht.
     public void deleteAnswer(String id, String aId, String uId) {
         //TODO Benutzer überprüfen
         Long lAnswerId = Long.parseLong(aId);
@@ -143,7 +152,12 @@ public class AnswerService {
         return answerDTOs;
     }
 
-    //TODO
+    /**
+     * Holt alle Antworten eine bestimmten Benutzers aus der Datenbank und gibt sie zurück.
+     *
+     * @param id Eindeutiger Identifikator des Benutzers
+     * @return Liste aller Antworten, die der Benutzer mit {@code id} gegeben hat.
+     */
     Collection<Answer> getAllAnswersByUserId(String id) {
          Long lUserId = Long.parseLong(id);
          return answerRepository.findAllByUser(lUserId);
