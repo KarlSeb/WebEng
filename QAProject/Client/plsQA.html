@@ -152,6 +152,7 @@
                             <div class="row">
                                 <div class="col-md-8">
                                     <h2>{{currentQuestion.title}}</h2>
+                                    <h5><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{currentQuestion.user_name}}</h5>
                                 </div>
 
                                 <div class="col-md-4">
@@ -169,10 +170,12 @@
                                             <h6> Solved: </h6>
                                         </div>
                                         <div class="col-md-6">
-                                            <span class="glyphicon glyphicon-ok" aria-hidden="true"
-                                                  v-show="currentQuestion.answered"></span>
-                                            <span class="glyphicon glyphicon-remove" aria-hidden="true"
-                                                  v-show="!currentQuestion.answered"></span>
+                                            <h6>
+                                                <span class="glyphicon glyphicon-ok" aria-hidden="true"
+                                                      v-show="currentQuestion.answered"></span>
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                                                      v-show="!currentQuestion.answered"></span>
+                                            </h6>
                                         </div>
                                     </div>
 
@@ -188,7 +191,7 @@
                                   :date="a.date" :accepted="a.accepted" :user_id="a.userId"
                                   @removedquestion="getAllQs">#
                         </answer>
-                        <div class="panel panel-default" v-if="logged_in">
+                        <div class="panel panel-default" v-if="logged_in" style="cursor: pointer">
                             <div class="panel-heading" role="tab" id="headingNewAnswer" data-toggle="collapse" data-parent="#accordion" href="#collapseNewAnswer" aria-expanded="false" aria-controls="collapseNewAnswer">
                                 <h4 class="panel-title">
                                         Add new A
@@ -196,6 +199,9 @@
                             </div>
                             <div id="collapseNewAnswer" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNewAnswer">
                                 <div class="panel-body">
+                                    <div class="alert alert-danger" role="alert" v-show="newanswerfail">
+                                        Eine leere Antwort ist nicht erlaubt!
+                                    </div>
                                     <textarea class="form-control" placeholder="Answer" rows="10"
                                               v-model="newAnswer.text">
                                 </textarea>
@@ -203,18 +209,18 @@
                                 </div>
                                 <div class="panel-footer">
                                     <div class="text-right">
-                                        <button type="button" class="btn btn-primary">Send</button>
+                                        <button type="button" class="btn btn-primary"  @click="add_answer()">Send</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <div class="btn-group" role="group" v-if="showQuestionControl(currentQuestion)">
+                        <div class="btn-group" role="group" v-if="showQuestionControl()">
                             <button  type="button" class="btn btn-danger"  @click="remove_question(currentQuestion)">DELETE Q</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
-                        <div v-if="!showQuestionControl(currentQuestion)">
+                        <div v-if="!showQuestionControl()">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                     </div>
@@ -257,7 +263,7 @@
             <div class="row">
                 <div class="col-md-8">
                     <h2> <span class="badge">{{q.answerCount}}</span> {{q.title | truncate(15)}}</h2>
-                    <h4>{{q.userName}}</h4>
+                    <h6><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{q.userName}}</h6>
                 </div>
 
                 <div class="col-md-4">
@@ -275,8 +281,10 @@
                             <h6> Solved: </h6>
                         </div>
                         <div class="col-md-6">
-                            <span class="glyphicon glyphicon-ok" aria-hidden="true" v-show="q.answered"></span>
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true" v-show="!q.answered"></span>
+                            <h6>
+                                <span class="glyphicon glyphicon-ok" aria-hidden="true" v-show="q.answered"></span>
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true" v-show="!q.answered"></span>
+                            </h6>
                         </div>
                     </div>
 
@@ -293,29 +301,31 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="row">
-                <div class="col-md-3">
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true" v-show="a.accepted"></span>
+                <div class="col-md-1">
+                    <h5>
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true" v-show="a.accepted"></span>
+                    </h5>
                 </div>
-                <div class="col-md-9">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div v-if="showQuestionControlA()">
-                                <button  type="button" class="btn btn-success btn-block"  @click="accept_answer(a)">ACCEPT A</button>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div v-if="showAnswerDelete()">
-                                <button  type="button" class="btn btn-danger btn-block"  @click="remove_answer(a)">DELETE A</button>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <h6>Geantwortet am: </span></h6>
-                        </div>
-                        <div class="col-md-3">
-                            <h6>{{a.date}}</h6>
+                <div class="col-md-4">
+                    <h5>
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{a.userName}}
+                    </h5>
+                </div>
+                    <div class="col-md-2">
+                        <div v-if="showQuestionControlA() && !a.accepted">
+                            <button  type="button" class="btn btn-success btn-block"  @click="accept_answer(a)">ACCEPT A</button>
                         </div>
                     </div>
-                </div>
+                    <div class="col-md-2">
+                        <div v-if="showAnswerDelete()">
+                            <button  type="button" class="btn btn-danger btn-block"  @click="remove_answer(a)">DELETE A</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <h6>
+                            <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> {{a.date}}
+                        </h6>
+                    </div>
             </div>
         </div>
         <div class="panel-body">
@@ -325,6 +335,19 @@
 </template>
 
 <script>
+
+    Vue.filter('uppercase', function (input) {
+        return input.toUpperCase();
+    });
+
+    Vue.filter('truncate', function (string, value) {
+        if (string.length < value) {
+            return string
+        } else {
+            return string.substring(0, value) + '...';
+        }
+    });
+
 
     Vue.component('tabs', {
         template: '#template-tabs',
@@ -386,22 +409,9 @@
         },
         mounted: function () {
             this.isActive = this.selected
-        }
+
+        },
     });
-
-
-    Vue.filter('uppercase', function (input) {
-        return input.toUpperCase();
-    });
-
-    Vue.filter('truncate', function (string, value) {
-        if (string.length < value) {
-            return string
-        } else {
-            return string.substring(0, value) + '...';
-        }
-    });
-
 
     Vue.component('question', {
         template: '#template-questions',
@@ -428,19 +438,16 @@
         methods: {
 
             showQuestion: function () {
-                this.getAsToQ(this.id);
                 app.currentQuestion.id = this.id;
                 app.currentQuestion.title = this.title;
                 app.currentQuestion.user_name = this.username;
                 app.currentQuestion.text = this.text;
                 app.currentQuestion.user_id = this.user_id;
+                app.currentQuestion.date = this.date;
                 app.currentQuestion.answered = this.answered;
+                app.getAsToQ(this.id);
             },
-            getAsToQ: function () {
-                $.getJSON('http://localhost:8080/questions/' + this.id + '/answers', function (res) {
-                    app.currentQuestion.answers = res;
-                });
-            },
+
             showAc: function () {
                 alert("helllo");
                 return 5
@@ -503,7 +510,7 @@
                 text: ''
             },
             newAnswer: {
-                title: '',
+                parentQuestionId: '',
                 text: ''
             },
             currentQuestion: {
@@ -513,7 +520,8 @@
                 text: '',
                 answered:'',
                 answers: [],
-                user_id: ''
+                user_id: '',
+                date: ''
             },
             userDTO: {
                 id: '1',
@@ -525,6 +533,7 @@
             newtitlefail: false,
             newtextfail: false,
             registerfail: false,
+            newanswerfail: false,
             logged_in: false,
         },
         computed: {
@@ -536,16 +545,6 @@
         },
         created: function () {
             this.getQs();
-            /*$.ajax({
-             url:'http://localhost:8080/questions/all',
-             type:'DELETE',
-             xhrFields:{withCredentials:true},
-             complete:function(xhr){
-             if(xhr.status !== 401) {
-             app.logged_in = true;
-             }
-             }
-             });*/
         },
         methods: {
             login: function () {
@@ -561,6 +560,7 @@
                         success: function () {
                             this.logged_in = true;
                             this.loginfail = false;
+                            this.getQs();
                             $('#loginModal').modal('toggle');
                         }.bind(this)
                     });
@@ -579,7 +579,7 @@
                         success: function () {
                             this.logged_in = true;
                             this.loginfail = false;
-
+                            this.getQs();
                             $('#loginModal').modal('toggle');
                         }.bind(this)
                     });
@@ -599,6 +599,45 @@
                 this.newQuestion.title = '';
             },
 
+            
+            getQs: function () {
+                this.getAllQs();
+                this.getUnansweredQs();
+                this.getUnsolvedQs();
+                if (this.logged_in){
+                    this.getQsIAnswered();
+                }
+            },
+            getAllQs: function () {
+                $.getJSON('http://localhost:8080/questions/all', function (res) {
+                    app.all_questions = res;
+                });
+            },
+            getUnansweredQs: function () {
+                $.getJSON('http://localhost:8080/questions/unanswered', function (res) {
+                    app.unanswered_questions = res;
+                });
+            },
+            getQsIAnswered: function () {
+                $.getJSON('http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions', function (res) {
+                    app.qs_i_answered = res;
+                });
+            },
+            getUnsolvedQs: function () {
+                $.getJSON('http://localhost:8080/questions/unsolved', function (res) {
+                    app.unsolved_questions = res;
+                });
+            },
+            getAsToQ: function () {
+                $.getJSON('http://localhost:8080/questions/' + app.currentQuestion.id + '/answers', function (res) {
+                    app.currentQuestion.answers = res;
+                });
+            },
+
+            showQuestionControl: function () {
+                return (this.currentQuestion.user_id == this.userDTO.id) && this.logged_in
+            },
+            
             addQ: function () {
                 if (this.newQuestion.title != "" && this.newQuestion.text != "") {
                     alert("Title: " + this.newQuestion.title
@@ -629,36 +668,6 @@
                     }
                 }
             },
-            getQs: function () {
-                this.getAllQs();
-                this.getUnansweredQs();
-                this.getUnsolvedQs();
-                this.getQsIAnswered();
-
-            },
-            getAllQs: function () {
-                $.getJSON('http://localhost:8080/questions/all', function (res) {
-                    app.all_questions = res;
-                });
-            },
-            getUnansweredQs: function () {
-                $.getJSON('http://localhost:8080/questions/unanswered', function (res) {
-                    app.unanswered_questions = res;
-                });
-            },
-            getQsIAnswered: function () {
-                $.getJSON('http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions', function (res) {
-                    app.qs_i_answered = res;
-                });
-            },
-            getUnsolvedQs: function () {
-                $.getJSON('http://localhost:8080/questions/unsolved', function (res) {
-                    app.unsolved_questions = res;
-                });
-            },
-            showQuestionControl: function (question) {
-                return (question.user_id == this.userDTO.id) && this.logged_in
-            },
             remove_question: function (question) {
                 /*$.ajax({
                  url: 'http://localhost:8080/todos/' + todo.pid,
@@ -669,7 +678,22 @@
                  }.bind(this)
                  });*/
                 alert("remove question with ID"+question.id)
+            },
+            add_answer: function () {
+                if(this.newAnswer.text != ''){
+
+                    alert("add answer with text: "+this.newAnswer.text);
+                    this.newanswerfail = false;
+                    this.newAnswer.text = '';
+                } else {
+                    this.newanswerfail = true;
+                }
+
+            },
+            remove_answer: function () {
+                
             }
+
 
         }
     });
