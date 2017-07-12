@@ -4,9 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import qasystem.application.exceptions.UserAlreadyExistsException;
+import qasystem.persistence.entities.Role;
 import qasystem.persistence.entities.User;
+import qasystem.persistence.repositories.RoleRepository;
 import qasystem.persistence.repositories.UserRepository;
 import qasystem.web.dtos.UserDTO;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Stellt die Funktionalität für das Registrieren eines neuen Nutzers bereit.
@@ -14,12 +19,14 @@ import qasystem.web.dtos.UserDTO;
 @Service
 public class RegistrationService extends MyUserDetailsService{
 
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public RegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+    public RegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository){
         super(userRepository);
         this.passwordEncoder = passwordEncoder;
+        this.roleRepository = roleRepository;
     }
 
     /**
@@ -34,6 +41,10 @@ public class RegistrationService extends MyUserDetailsService{
             throw new UserAlreadyExistsException(accountDto.getUserName());
         }
         User user = new User(accountDto.getUserName(), passwordEncoder.encode(accountDto.getPassword()));
+        Set<Role> userRoles = new HashSet<>();
+        Role userRole = roleRepository.findOne("USER");
+        userRoles.add(userRole);
+        user.setRoles(userRoles);
         return convertUserToDTO(userRepository.save(user));
     }
 
