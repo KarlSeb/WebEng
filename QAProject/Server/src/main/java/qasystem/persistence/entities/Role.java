@@ -10,10 +10,11 @@ import java.util.Set;
 @Entity
 public class Role {
 
-    @Id
+
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Id
     private String role;
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)

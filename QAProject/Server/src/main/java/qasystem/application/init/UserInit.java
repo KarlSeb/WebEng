@@ -2,6 +2,7 @@ package qasystem.application.init;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import qasystem.persistence.entities.Role;
@@ -12,6 +13,7 @@ import qasystem.persistence.repositories.UserRepository;
 import java.util.HashSet;
 
 @Component
+@Order(1)
 public class UserInit implements CommandLineRunner {
 
     private final UserRepository userRepository;
