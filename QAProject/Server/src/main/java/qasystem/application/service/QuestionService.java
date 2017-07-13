@@ -84,9 +84,9 @@ public class QuestionService {
         Long lId = Long.parseLong(id);
         Question toDelete = questionRepository.findOne(lId);
         Collection<Answer> answersToQuestion = new LinkedList<>();
-        questionRepository.delete(lId);
         answersToQuestion.addAll(toDelete.getAnswers());
         answerService.deleteAnswerList(answersToQuestion);
+        questionRepository.delete(lId);
     }
 
     //=======NON-API=======
