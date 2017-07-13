@@ -249,7 +249,9 @@
                 <li class="nav-link" :class="{ active: menuItem.isActive}" v-for="menuItem in navItemsArray"><a
                         :href="menuItem.href" @click="selectTabItem(menuItem)">{{ menuItem.name }}</a></li>
                 <li><a href="#" data-toggle="modal" data-target="#loginModal" v-if="!logged_in">Login</a></li>
-
+            </ul>
+            <ul class="navbar-text navbar-right" v-if="logged_in" style="padding-right: 70px">
+                <p>Signed in as {{userName}}</p>
             </ul>
 
 
@@ -324,6 +326,9 @@
                         <div v-if="showQuestionControlA() && !a.accepted">
                             <button  type="button" class="btn btn-success btn-block"  @click="accept_answer(a)">ACCEPT A</button>
                         </div>
+                        <div v-if="showQuestionControlA() && a.accepted">
+                            <button  type="button" class="btn btn-warning btn-block"  @click="un_accept_answer(a)">UNACCEPT A</button>
+                        </div>
                     </div>
                     <div class="col-md-2">
                         <div v-if="showAnswerDelete()">
@@ -366,7 +371,8 @@
         data: function () {
             return {
                 navItemsArray: [],
-                logged_in: false
+                logged_in: false,
+                userName: 'test'
             }
         },
         mounted: function () {
@@ -383,6 +389,9 @@
             },
             newQuestion: function () {
                 return this.$parent.newQuestion
+            },
+            userName: function () {
+                return this.$parent.userDTO.userName;
             }
         },
         methods: {
@@ -486,6 +495,9 @@
             },
             accept_answer: function (answer) {
                 app.accept_answer(answer);
+            },
+            un_accept_answer: function (answer) {
+                app.un_accept_answer(answer);
             },
             showQuestionControlA: function () {
                 return (app.currentQuestion.user_id == app.userDTO.id) && app.logged_in
@@ -746,6 +758,17 @@
                 $.ajax({
                     url: 'http://localhost:8080/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
                     type: 'DELETE',
+                    xhrFields: {withCredentials: true},
+                    success: function () {
+                        app.getQs();
+                        app.getAsToQ(this.currentQuestion.id);
+                    }.bind(this),
+                });
+            },
+            un_accept_answer: function (answer) {
+                $.ajax({
+                    url: 'http://localhost:8080/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
+                    type: 'PUT',
                     xhrFields: {withCredentials: true},
                     success: function () {
                         app.getQs();
