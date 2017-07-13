@@ -742,11 +742,21 @@
                 alert("remove question with ID"+question.id)
             },
             add_answer: function () {
-                if(this.newAnswer.text != ''){
-
+                if (this.newAnswer.text != "") {
                     alert("add answer with text: "+this.newAnswer.text);
-                    this.newanswerfail = false;
-                    this.newAnswer.text = '';
+                    $.ajax({
+                        url: 'http://localhost:8080/questions/'+ this.currentQuestion.id+"/answers",
+                        type: 'POST',
+                        xhrFields: {withCredentials: true},
+                        data: JSON.stringify(this.newAnswer),
+                        contentType: 'application/json',
+                        success: function () {
+                            this.newanswerfail = false;
+                            this.newAnswer.text = '';
+                            this.getQs();
+                            this.getAsToQ();
+                        }.bind(this),
+                    });
                 } else {
                     this.newanswerfail = true;
                 }
