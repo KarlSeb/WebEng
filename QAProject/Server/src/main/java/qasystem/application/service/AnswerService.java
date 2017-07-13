@@ -90,7 +90,7 @@ public class AnswerService {
         if(id == null||aId == null){
             throw new IllegalArgumentException("The Ids cannot be null! Given QuestionId: "+id+", given AnswerId: "+aId);
         }
-        authenticateUserForAnswer(id, user);
+        authenticateUserForAnswer(aId, user);
         Long lAnswerId = Long.parseLong(aId);
         Answer toDelete = answerRepository.findOne(lAnswerId);
         if (toDelete.isAccepted()){
