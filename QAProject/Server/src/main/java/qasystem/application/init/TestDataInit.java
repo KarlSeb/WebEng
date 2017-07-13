@@ -156,7 +156,7 @@ public class TestDataInit implements CommandLineRunner{
         Answer a3= new Answer(q3, "bobs answer to q3! SEHR AUSFÜHRLICH: " + longestString, bob);
         arepo.save(a3);
         log.info("Saving answer a3. ParentQuestion: " + a3.getParentQuestion().getTitle() + " , user: " + a3.getUser().getUsername());
-        System.out.println("LORE IPSUM: Generated 50 paragraphs, 4553 words, 30644 bytes of Lorem Ipsum");//TODO optional
+        System.out.println("LOREM IPSUM: Generated 50 paragraphs, 4553 words, 30644 bytes of Lorem Ipsum");//TODO optional
     }
 
     private String initlongestString() {

@@ -70,8 +70,6 @@ public class QuestionController {
     }
 
     //=======POST-MAPPING=======
-    //TODO evtl. Mapping bei beiden Methoden ändern, da UserId (und möglicherweise Date) nötig sein werden.
-
     /**
      * Nimmt die Anfrage entgegen und erstellt für die entsprechende Frage, die per Id identifiziert wird, eine
      * neue Antwort in der Datenbank.
@@ -95,9 +93,8 @@ public class QuestionController {
     public QuestionDTO createQuestion(@Valid @RequestBody QuestionDTO question, @AuthenticationPrincipal User user){
         return questionService.createQuestion(question, user);
     }
+    
     //=======PUT-MAPPING=======
-    //TODO Methoden zum bearbeiten bereits erstellter Frage und Antworten, wenn noch Zeit ist.
-
     /**
      * Identifiziert die entsprechende Antwort über die eindeutige aId für die Antwort und setzt das entsprechende Flag.
      * Setzt außerdem die Frage, die über die Id  identifiziert wird, auf beantwortet.
