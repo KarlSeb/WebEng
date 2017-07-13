@@ -21,9 +21,7 @@ import qasystem.persistence.repositories.RoleRepository;
 import qasystem.persistence.repositories.UserRepository;
 import qasystem.web.controller.GenericController;
 import qasystem.web.controller.QuestionController;
-import qasystem.web.dtos.QuestionDTO;
 
-import java.util.Collection;
 import java.util.HashSet;
 
 /**
@@ -111,55 +109,66 @@ public class TestDataInit implements CommandLineRunner{
         urepo.save(fred);
         log.info("Saving user fred. Username: " + fred.getUsername() + " , password: " + fredspw);
 
-        Question q1 = new Question("title1", "question1?", jack);
+        Question q1 = new Question("Warum ist die Banane krumm?", "Hey ich bins, Jack! Ich wollte wissen warum Bananen krumm und nicht gerade sind?", jack);
         qrepo.save(q1);
         log.info("Saving question q1. Title: " + q1.getTitle() + " , user: " + q1.getUser().getUsername());
-        Question q2 = new Question("title2", "question2?", bob);
+        Question q2 = new Question("Warum kann man sein Ellenbogen nicht lecken?", "[Original kopiert von https://www.gutefrage.net/frage/warum-kann-man-sein-ellenbogen-nicht-lecken  (keine Haftung für Rechtschreibung)] --- \n" +
+                "Man kann sein Fuß Übern kopf machen ein spaghatt,salto,handstand,usw. aber warum kann man sein ellenbogen nicht lecken?", bob);
         qrepo.save(q2);
         log.info("Saving question q2. Title: " + q2.getTitle() + " , user: " + q2.getUser().getUsername());
-        Question q3 = new Question("title3", "question3?", bob);
+        Question q3 = new Question("LOREM IPSUM?", "was ist ein lorem ipsum?", bob);
         qrepo.save(q3);
         log.info("Saving question q3. Title: " + q3.getTitle() + " , user: " + q3.getUser().getUsername());
-//        String longString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sodales tortor massa, " +
-//                "vitae faucibus tortor rhoncus et. Morbi auctor in nulla sed bibendum. Aliquam mattis rhoncus nulla at suscipit.";
-//        String longerString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sodales tortor massa, " +
-//                "vitae faucibus tortor rhoncus et. Morbi auctor in nulla sed bibendum. Aliquam mattis rhoncus nulla at suscipit. " +
-//                "Duis consectetur aliquam metus eu condimentum. Suspendisse ligula nisl, elementum eu euismod et, auctor vitae nisl. " +
-//                "Pellentesque in dolor a mauris iaculis aliquet. Interdum et malesuada fames ac ante ipsum primis in faucibus. " +
-//                "Ut in vehicula tortor. Suspendisse potenti. Nullam ut nulla ex. Sed consequat lorem eu libero feugiat, ornare suscipit erat finibus. " +
-//                "Pellentesque risus tortor, dapibus et tempus sed, dictum quis dolor." +
-//                "Suspendisse rhoncus orci est, ut tristique urna porttitor vel. Duis lectus dolor, consectetur eget ante in, interdum placerat augue. " +
-//                "Etiam volutpat varius dui. Suspendisse odio purus, condimentum eget nisl non, aliquet mattis purus. Nam luctus ex in enim sollicitudin malesuada. " +
-//                "Praesent pretium lectus quis venenatis fringilla. Pellentesque condimentum felis ut faucibus tincidunt. Nunc egestas nisi quis tincidunt egestas. " +
-//                "Donec vestibulum libero orci, ut fermentum nisi facilisis eu. Mauris semper ante at rhoncus gravida. Donec sit amet gravida dolor. Sed magna lectus, " +
-//                "dictum vitae tristique quis, cursus non odio. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. " +
-//                "Donec laoreet velit massa, et fermentum neque aliquam sed. In eu lacus porta, facilisis urna ut, varius magna. Donec justo mi, egestas at orci vel, ornare volutpat orci. " +
-//                "Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam vitae tempus nibh. Integer hendrerit eros sed enim fermentum, lobortis tincidunt lacus egestas. " +
-//                "Quisque suscipit arcu vitae lorem hendrerit eleifend. Aliquam erat volutpat. Maecenas gravida sit amet nibh mattis bibendum." +
-//                "Pellentesque faucibus sed est id eleifend. Nam convallis lobortis accumsan. In maximus felis leo, eu dapibus neque vulputate et. Integer quis lectus at leo volutpat " +
-//                "lacinia nec a enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. Quisque tincidunt lorem vel orci ultrices, at venenatis nisi faucibus. " +
-//                "Nulla facilisi. Morbi eu nibh bibendum, hendrerit metus at, placerat erat. Suspendisse fermentum nisl vitae ligula convallis vestibulum." +
-//                "Aenean et aliquet erat, ut egestas sapien. Vivamus vel nisl scelerisque lacus sodales condimentum. Vestibulum sit amet hendrerit nisl. Nam in tristique velit, vitae tincidunt justo." +
-//                " Aenean placerat aliquam lorem at faucibus. In hac habitasse platea dictumst. Sed molestie purus vel nulla fermentum luctus. Vivamus ut porttitor diam, et consectetur mi. " +
-//                "Integer faucibus ac odio ut lacinia";
-        String longestString = initlongestString();
-        Question q4 = new Question(longestString.substring(0,200), longestString, jack);
+        String longString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sodales tortor massa, " +
+                "vitae faucibus tortor rhoncus et. Morbi auctor in nulla sed bibendum. Aliquam mattis rhoncus nulla at suscipit.";
+        String longerString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sodales tortor massa, " +
+                "vitae faucibus tortor rhoncus et. Morbi auctor in nulla sed bibendum. Aliquam mattis rhoncus nulla at suscipit. " +
+                "Duis consectetur aliquam metus eu condimentum. Suspendisse ligula nisl, elementum eu euismod et, auctor vitae nisl. " +
+                "Pellentesque in dolor a mauris iaculis aliquet. Interdum et malesuada fames ac ante ipsum primis in faucibus. " +
+                "Ut in vehicula tortor. Suspendisse potenti. Nullam ut nulla ex. Sed consequat lorem eu libero feugiat, ornare suscipit erat finibus. " +
+                "Pellentesque risus tortor, dapibus et tempus sed, dictum quis dolor." +
+                "Suspendisse rhoncus orci est, ut tristique urna porttitor vel. Duis lectus dolor, consectetur eget ante in, interdum placerat augue. " +
+                "Etiam volutpat varius dui. Suspendisse odio purus, condimentum eget nisl non, aliquet mattis purus. Nam luctus ex in enim sollicitudin malesuada. " +
+                "Praesent pretium lectus quis venenatis fringilla. Pellentesque condimentum felis ut faucibus tincidunt. Nunc egestas nisi quis tincidunt egestas. " +
+                "Donec vestibulum libero orci, ut fermentum nisi facilisis eu. Mauris semper ante at rhoncus gravida. Donec sit amet gravida dolor. Sed magna lectus, " +
+                "dictum vitae tristique quis, cursus non odio. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. " +
+                "Donec laoreet velit massa, et fermentum neque aliquam sed. In eu lacus porta, facilisis urna ut, varius magna. Donec justo mi, egestas at orci vel, ornare volutpat orci. " +
+                "Interdum et malesuada fames ac ante ipsum primis in faucibus. Nullam vitae tempus nibh. Integer hendrerit eros sed enim fermentum, lobortis tincidunt lacus egestas. " +
+                "Quisque suscipit arcu vitae lorem hendrerit eleifend. Aliquam erat volutpat. Maecenas gravida sit amet nibh mattis bibendum." +
+                "Pellentesque faucibus sed est id eleifend. Nam convallis lobortis accumsan. In maximus felis leo, eu dapibus neque vulputate et. Integer quis lectus at leo volutpat " +
+                "lacinia nec a enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam erat volutpat. Quisque tincidunt lorem vel orci ultrices, at venenatis nisi faucibus. " +
+                "Nulla facilisi. Morbi eu nibh bibendum, hendrerit metus at, placerat erat. Suspendisse fermentum nisl vitae ligula convallis vestibulum." +
+                "Aenean et aliquet erat, ut egestas sapien. Vivamus vel nisl scelerisque lacus sodales condimentum. Vestibulum sit amet hendrerit nisl. Nam in tristique velit, vitae tincidunt justo." +
+                " Aenean placerat aliquam lorem at faucibus. In hac habitasse platea dictumst. Sed molestie purus vel nulla fermentum luctus. Vivamus ut porttitor diam, et consectetur mi. " +
+                "Integer faucibus ac odio ut lacinia";
+        String longestString = initLongestString();
+        //q4 kann mit longString, longerString oder longestString initialisiert werden
+        Question q4 = new Question(longestString.substring(0,100), longestString, jack);
         qrepo.save(q4);
         log.info("Saving question q4. Title: " + q4.getTitle() + " , user: " + q4.getUser().getUsername());
 
-        Answer a1= new Answer(q1, "bobs answer to q1!", bob);
+        Answer a1= new Answer(q1, "Die Bananenfrucht wächst seitlich aus der Staude heraus. Um sich dem lebensnotwendigen Licht zuzuwenden, muss sie sich nach oben krümmen. Würde sie von vornherein gleichmäßig vom Licht beschienen, würde sie gerade wachsen. Sie sehen, die Erklärung, dass es Menschen gibt, die diese Frucht im Urwald krumm biegen, ist nur ein Lügenmärchen. \n" +
+                "Das ist übrigens auch einer der Gründe, warum Pflanzen nach oben wachsen - sie streben dorthin, wo sie das meiste Licht bekommen. Das können Sie auch am Blumentopf auf der heimischen Fensterbank beobachten. Die Pflanze wird im Laufe der Zeit der Stelle »entgegenwachsen«, an der sie am meisten Licht bekommt. Gleichzeitig hat die Pflanze an der dem Licht zugewandten Seite mehr Blätter. \n" +
+                "(source: http://www.wissen.de/warum-ist-die-banane-krumm)", bob);
         arepo.save(a1);
         log.info("Saving answer a1. ParentQuestion: " + a1.getParentQuestion().getTitle() + " , user: " + a1.getUser().getUsername());
-        Answer a2= new Answer(q2, "freds answer to q2!", fred);
+        qrepo.updateAnswered(q1.getId(), true);
+        arepo.updateAccepted(a1.getId(), true);
+        Answer a2= new Answer(q2, "[Original kopiert von https://www.gutefrage.net/frage/warum-kann-man-sein-ellenbogen-nicht-lecken  (keine Haftung für Rechtschreibung)] --- "+
+        "Ich wette,die meisten hier probieren's grad ;-)", fred);
         arepo.save(a2);
         log.info("Saving answer a2. ParentQuestion: " + a2.getParentQuestion().getTitle() + " , user: " + a2.getUser().getUsername());
-        Answer a3= new Answer(q3, "bobs answer to q3! SEHR AUSFÜHRLICH: " + longestString, bob);
+        Answer a3= new Answer(q2, "[Original kopiert von https://www.gutefrage.net/frage/warum-kann-man-sein-ellenbogen-nicht-lecken  (keine Haftung für Rechtschreibung)] --- "+
+                "Dafür fehlt ein zusätzliches Gelenk... oder deine Zunge ist zu kurz. Gene Simmons könnte es bestimmt.", michelle);
         arepo.save(a3);
         log.info("Saving answer a3. ParentQuestion: " + a3.getParentQuestion().getTitle() + " , user: " + a3.getUser().getUsername());
-        System.out.println("LOREM IPSUM: Generated 50 paragraphs, 4553 words, 30644 bytes of Lorem Ipsum");//TODO optional
+        Answer a4= new Answer(q3, "Siehe: http://www.lipsum.com/  Hier ein Beispiel:  +\n" + longestString, fred);
+        arepo.save(a4);
+        log.info("Saving answer a4. ParentQuestion: " + a4.getParentQuestion().getTitle() + " , user: " + a4.getUser().getUsername());
+        System.out.println("LOREM IPSUM: Generated 50 paragraphs, 4553 words, 30644 bytes of Lorem Ipsum");
     }
 
-    private String initlongestString() {
+    private String initLongestString() {
         return "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur dui tortor, commodo eget nibh vel, gravida sodales odio. Etiam vel ligula ut lectus semper eleifend id at magna. Aenean lacinia fermentum convallis. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam ornare lorem nisl, eget dignissim tortor malesuada et. Donec facilisis gravida risus in dignissim. Nunc nunc dolor, tincidunt id metus in, fermentum molestie diam. Suspendisse vitae mollis felis. Integer turpis justo, malesuada nec aliquam eget, fringilla ac sapien. Vivamus a ultrices metus. Cras porttitor rhoncus sagittis. Cras a ex quis nunc consequat consectetur. Cras nisi ante, dapibus eu lectus feugiat, dictum hendrerit orci. Nunc venenatis diam aliquet dui aliquet, quis congue nisi viverra. Ut feugiat tincidunt sapien, ac porta quam ultricies aliquet. Duis vel ultrices arcu, sed porttitor lacus.\n" +
                 "\n" +
                 "Nullam luctus tempus diam, quis posuere enim viverra et. Curabitur faucibus, purus in feugiat convallis, augue metus ornare diam, ac posuere orci turpis eget risus. Integer ultricies, risus in pulvinar cursus, odio nunc lacinia risus, eu feugiat tortor sapien vel urna. In hac habitasse platea dictumst. Nunc vestibulum mollis viverra. Vestibulum blandit eu ligula non bibendum. Donec tincidunt dignissim justo, in viverra enim convallis et. Fusce bibendum ipsum in ultricies posuere. Maecenas vestibulum dui vitae tortor iaculis, eget bibendum urna suscipit. Etiam euismod metus ut mi bibendum, in volutpat magna suscipit. Phasellus ut pharetra lacus, quis eleifend velit. Nullam vitae malesuada augue, quis fermentum nunc. Phasellus velit elit, rhoncus nec odio at, condimentum facilisis enim. Nunc in sem consectetur, convallis sem vel, pulvinar orci. Vestibulum neque urna, convallis eu purus vel, suscipit dignissim justo. Pellentesque viverra eleifend lectus id congue.\n" +
