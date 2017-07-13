@@ -81,7 +81,7 @@ public class QuestionController {
      */
     @PostMapping(value = "/{id:[1-9]+}/answers")
     @ResponseStatus(HttpStatus.CREATED)
-    public AnswerDTO answerQuestion(@PathVariable("id") String id, @Valid AnswerDTO answer,  @AuthenticationPrincipal User user){
+    public AnswerDTO answerQuestion(@PathVariable("id") String id, @Valid @RequestBody AnswerDTO answer,  @AuthenticationPrincipal User user){
         return answerService.answerQuestion(id, answer, user);
     }
 
@@ -92,7 +92,7 @@ public class QuestionController {
      */
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public QuestionDTO createQuestion(@Valid QuestionDTO question, @AuthenticationPrincipal User user){
+    public QuestionDTO createQuestion(@Valid @RequestBody QuestionDTO question, @AuthenticationPrincipal User user){
         return questionService.createQuestion(question, user);
     }
     //=======PUT-MAPPING=======
