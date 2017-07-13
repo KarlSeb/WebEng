@@ -5,6 +5,7 @@
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.CommandLineRunner;
 //import org.springframework.context.annotation.PropertySource;
+//import org.springframework.core.annotation.Order;
 //import org.springframework.core.env.Environment;
 //import org.springframework.stereotype.Component;
 //import qasystem.QAProjectApplication;
@@ -19,11 +20,14 @@
 //import qasystem.web.dtos.UserDTO;
 //
 //import java.util.Collection;
+//import java.util.LinkedList;
+//import java.util.List;
 //
 ///**
 // * Beim Start der Applikation wird die run()-Methode dieser Klasse aufgerufen. Diese Klasse dient dabei Testzwecken.
 // */
 //@Component
+//@Order(3)
 //@PropertySource("classpath:config.properties")
 //public class TestInit implements CommandLineRunner{
 //    private final UserRepository repository;
@@ -49,103 +53,34 @@
 //     */
 //    @Override
 //    public void run(String... strings) throws Exception{
-//        // save a couple of Users
-////        if (!env.getProperty("testdataOn", boolean.class)) return; //Geht leider nur wenn String true oder false ist
-//        String testdataOn = env.getProperty("testdataOn").toLowerCase();
-//        if (testdataOn.equals("no") || testdataOn.equals("false") || testdataOn.equals("off")) return;
-//        else if (!(testdataOn.equals("yes") || testdataOn.equals("true") || testdataOn.equals("on"))) {
-//            System.err.println( "Testdata was turned off. "
-//                    + "Allowed values for 'testdataOn' in the config.properties file are on/off, yes/no, true/false");
-//            return;
+//        User test = new User("test", "test");
+//        test = repository.save(test);
+//        Question testQ = new Question("TestQ", "TestQ", test);
+//        testQ = qrepo.save(testQ);
+//        List<Answer> answers = new LinkedList<>();
+//        Answer a1 = new Answer(testQ, "a1", test);
+//        Answer a2 = new Answer(testQ, "a2", test);
+//        Answer a3 = new Answer(testQ, "a3", test);
+//        Answer a4 = new Answer(testQ, "a4", test);
+//        answers.add(a1);
+//        answers.add(a2);
+//        answers.add(a3);
+//        answers.add(a4);
+//        arepo.save(answers);
+//        log.info("INIT DONE");
+//        log.info("--------------------------------------------------------");
+//        log.info("Fetching all Answers to testQ");
+//        Collection<Answer> as = arepo.findAllByParentQuestion(testQ.getId());
+//        for (Answer a: as){
+//            log.info(a.toString());
 //        }
-//        repository.save(new User("Jack", "Bauer"));
-//        repository.save(new User("Chloe", "O'Brian"));
-//        repository.save(new User("Kim", "Bauer"));
-//        repository.save(new User("David", "Palmer"));
-//        repository.save(new User("Michelle", "Dessler"));
-//
-//        // fetch all Users
-//        log.info("Users found with findAll():");
-//        log.info("-------------------------------");
-//        for (User user : repository.findAll()) {
-//            log.info(user.toString());
+//        log.info("--------------------------------------------------------");
+//        log.info("Fetching all Answers to testQ after deleting one Answer");
+//        arepo.delete(a3);
+//        Collection<Answer> as2 = arepo.findAllByParentQuestion(testQ.getId());
+//        for (Answer a: as2){
+//            log.info(a.toString());
 //        }
-//        log.info("");
-//
-//        // fetch an individual User by ID
-//        User user = repository.findOne(1L);
-//        log.info("User found with findOne(1L):");
-//        log.info("--------------------------------");
-//        log.info(user.toString());
-//        log.info("");
-//
-//        // fetch Users by last name
-//        log.info("User found with findByUsername('Jack'):");
-//        log.info("--------------------------------------------");
-//        User jack = repository.findByUsername("Jack");
-//        log.info(jack.toString());
-//        log.info("");
-//
-//        // test User registration
-//        log.info("Register new User with registerNewUser()");
-//        log.info("--------------------------------------------");
-//        UserDTO newUser = new UserDTO();
-//        newUser.setUserName("Max");
-//        newUser.setPassword("pass");
-//        genericController.registerNewUser(newUser);
-//        log.info("Registration done!");
-//        log.info("");
-//
-//        //Fetch new registered User
-//        log.info("User found with findByUsername('Max'):");
-//        log.info("--------------------------------------------");
-//        User max = repository.findByUsername("Max");
-//        log.info(max.toString());
-//        log.info("");
-//
-//        User bob = new User("bob", "bobspw");
-//        repository.save(bob);
-//        User fred = new User("fred", "fredspw");
-//        repository.save(fred);
-//        User luke = new User("luke", "lukespw");
-//        repository.save(luke);
-//        Question q1 = new Question("title1", "question1?", jack);
-//        qrepo.save(q1);
-//        Question q2 = new Question("title2", "question2?", bob);
-//        qrepo.save(q2);
-//        Question q3 = new Question("title3", "question3?", bob);
-//        qrepo.save(q3);
-//        Question q4 = new Question("title4", "question4?", jack);
-//        qrepo.save(q4);
-//
-//        Collection<Question> unanswered = qrepo.findAllByAnsweredNot();
-//        log.info("All unanswered questions");
-//        for (Question q: unanswered) {
-//            log.info(q.toString());
-//        }
-//        log.info("Done \n");
-//        qrepo.updateAnswered(q1.getId(),true);
-//        log.info("question1 set to answered");
-//        Collection<Question> unanswered2 = qrepo.findAllByAnsweredNot();
-//        log.info("Now all unanswered questions");
-//        for (Question q: unanswered2) {
-//            log.info(q.toString());
-//        }
-//        log.info("Done \n");
-//        log.info("Creating answers to q1, q2 and q3\n");
-//        Answer a1= new Answer(q1, "bobs answer to q1!", bob);
-//        arepo.save(a1);
-//        Answer a2= new Answer(q2, "lukes answer to q2!", luke);
-//        arepo.save(a2);
-//        Answer a3= new Answer(q3, "bobs answer to q3!", bob);
-//        arepo.save(a3);
-//
-//        log.info("All questions bob has answered:");
-//        Collection<Question> answeredByBob = qrepo.findAllByAnswersContainsUserId(bob.getId());
-//        for (Question q: answeredByBob) {
-//            log.info(q.toString());
-//        }
-//        log.info("Done\n");
-//
+//        log.info("--------------------------------------------------------");
 //    }
 //}
