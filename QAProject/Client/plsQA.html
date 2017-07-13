@@ -243,19 +243,30 @@
 <script type="x-template" id="template-tabs">
 
     <div id="applicationContainer">
-        <div id="navBarContainer" class="navbar navbar-default navbar-fixed-top" style="padding-left: 70px">
-            <ul class=" nav navbar-nav ">
-                <li><a href="#" data-toggle="modal" data-target="#newQModal" v-if="logged_in">newQ</a></li>
-                <li class="nav-link" :class="{ active: menuItem.isActive}" v-for="menuItem in navItemsArray"><a
-                        :href="menuItem.href" @click="selectTabItem(menuItem)">{{ menuItem.name }}</a></li>
-                <li><a href="#" data-toggle="modal" data-target="#loginModal" v-if="!logged_in">Login</a></li>
-            </ul>
-            <ul class="navbar-text navbar-right" v-if="logged_in" style="padding-right: 70px">
-                <p>Signed in as {{userName}}</p>
-            </ul>
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">PLS QA</a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class=" nav navbar-nav ">
+                        <li><a href="#" data-toggle="modal" data-target="#newQModal" v-if="logged_in">newQ</a></li>
+                        <li class="nav-link" :class="{ active: menuItem.isActive}" v-for="menuItem in navItemsArray"><a
+                                :href="menuItem.href" @click="selectTabItem(menuItem)">{{ menuItem.name }}</a></li>
+                        <li><a href="#" data-toggle="modal" data-target="#loginModal" v-if="!logged_in">Login</a></li>
+                    </ul>
+                    <ul class="navbar-text navbar-right" v-if="logged_in" style="padding-right: 70px">
+                        <p>Signed in as {{userName}}</p>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-
-        </div>
         <div id="tabContentContainer">
             <slot></slot>
         </div>
@@ -273,7 +284,10 @@
         <div class="panel-heading">
             <div class="row">
                 <div class="col-md-8">
-                    <h2> <span class="badge">{{q.answerCount}}</span> {{q.title | truncate(15)}}</h2>
+                    <h2>
+                        <span class="badge">{{q.answerCount}}</span>
+                        <span style="word-wrap: break-word;"> {{q.title | truncate(15)}}</span>
+                    </h2>
                     <h6><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{q.userName}}</h6>
                 </div>
 
@@ -303,7 +317,9 @@
             </div>
         </div>
         <div class="panel-body">
-            {{q.text | truncate(50)}}
+            <span style="word-wrap: break-word;">
+                {{q.text | truncate(50)}}
+            </span>
         </div>
     </div>
 </template>
@@ -326,7 +342,7 @@
                         <div v-if="showQuestionControlA() && !a.accepted">
                             <button  type="button" class="btn btn-success btn-block"  @click="accept_answer(a)">ACCEPT A</button>
                         </div>
-                        <div v-if="showQuestionControlA() && a.accepted">
+                        <div v-if="showQuestionControlA() && a.accepted && false">
                             <button  type="button" class="btn btn-warning btn-block"  @click="un_accept_answer(a)">UNACCEPT A</button>
                         </div>
                     </div>
@@ -632,17 +648,16 @@
                 });
             },
             logout: function () {
-
+                this.delete_cookie("JSESSIONID");
                 this.logged_in = false;
                 this.userDTO.password = '';
                 this.userDTO.userName = '';
             },
-            discardQ: function () {
-                this.newQuestion.text = '';
-                this.newQuestion.title = '';
+            delete_cookie: function ( name ) {
+                alert("delet cookie:"+ name);
+                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
             },
 
-            
             getQs: function () {
                 this.getAllQs();
                 this.getUnansweredQs();
@@ -696,7 +711,10 @@
             showQuestionControl: function () {
                 return (this.currentQuestion.user_id == this.userDTO.id) && this.logged_in
             },
-            
+            discardQ: function () {
+                this.newQuestion.text = '';
+                this.newQuestion.title = '';
+            },
             addQ: function () {
                 if (this.newQuestion.title != "" && this.newQuestion.text != "") {
                     $.ajax({
@@ -734,6 +752,7 @@
                     }.bind(this),
                 });
             },
+
             add_answer: function () {
                 if (this.newAnswer.text != "") {
                     $.ajax({
