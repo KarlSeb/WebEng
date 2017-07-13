@@ -12,8 +12,6 @@ import javax.validation.constraints.NotNull;
 public class AnswerDTO {
     private long id;
 
-    @NotEmpty
-    @NotNull
     private long parentQuestionId;
 
     private String text;
@@ -22,8 +20,6 @@ public class AnswerDTO {
 
     private boolean accepted;
 
-    @NotEmpty
-    @NotNull
     private long userId;
 
     private String userName;
