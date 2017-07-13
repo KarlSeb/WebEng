@@ -80,11 +80,15 @@
                         <h4 class="modal-title">Login</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-danger" role="alert" v-show="loginfail">Alle Felder müssen befüllt
+                        <div class="alert alert-danger" role="alert" v-show="login_input_fail">Alle Felder müssen befüllt
                             sein!
                         </div>
-                        <input type="text" v-model="userDTO.userName" placeholder="Nutzername"/>
-                        <input type="password" v-model="userDTO.password" placeholder="Passwort"/>
+                        <div class="alert alert-danger" role="alert" v-show="register_fail">Der Name ist bereits vergeben!
+                        </div>
+                        <div class="alert alert-danger" role="alert" v-show="login_fail">Nutzername oder Passwort sind falsch!
+                        </div>
+                        <input type="text" v-model="userDTO.userName" placeholder="Nutzername" maxlength="15"/>
+                        <input type="password" v-model="userDTO.password" placeholder="Passwort" maxlength="15"/>
 
                     </div>
                     <div class="modal-footer">
@@ -114,8 +118,9 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">Q-Titel</div>
                             <div class="panel-body">
-                                <input type="text" class="form-control" placeholder="Title" v-model="newQuestion.title"
-                                       aria-describedby="sizing-addon1">
+                                 <textarea class="form-control" placeholder="Title" v-model="newQuestion.title"
+                                       aria-describedby="sizing-addon1" maxlength="200">
+                                      </textarea>
                             </div>
                         </div>
                         <div class="alert alert-danger" role="alert" v-show="newtextfail">Alle Felder müssen befüllt
@@ -151,7 +156,9 @@
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-md-8">
-                                    <h2>{{currentQuestion.title}}</h2>
+                                    <span style="word-wrap: break-word;">
+                                        <h2>{{currentQuestion.title}}</h2>
+                                    </span>
                                     <h5><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{currentQuestion.user_name}}</h5>
                                 </div>
 
@@ -183,7 +190,9 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            {{currentQuestion.text}}
+                            <span style="word-wrap: break-word;">
+                                {{currentQuestion.text}}
+                            </span>
                         </div>
                     </div>
                     <div class="modal-body">
@@ -341,10 +350,12 @@
     });
 
     Vue.filter('truncate', function (string, value) {
-        if (string.length < value) {
-            return string
-        } else {
-            return string.substring(0, value) + '...';
+        if (string != null) {
+            if (string.length < value) {
+                return string
+            } else {
+                return string.substring(0, value) + '...';
+            }
         }
     });
 
@@ -506,8 +517,14 @@
             unsolved_questions: [],
             qs_i_answered: [],
             newQuestion: {
+                id:'',
                 title: '',
-                text: ''
+                text: '',
+                date:'',
+                answered:'',
+                userId:'',
+                userName:'',
+                answerCount:''
             },
             newAnswer: {
                 parentQuestionId: '',
@@ -524,15 +541,16 @@
                 date: ''
             },
             userDTO: {
-                id: '1',
-                userName: '',
-                password: ''
+                id: '8',
+                userName: 'bob',
+                password: 'bobspw'
             },
 
-            loginfail: false,
+            login_input_fail: false,
+            register_fail: false,
+            login_fail: false,
             newtitlefail: false,
             newtextfail: false,
-            registerfail: false,
             newanswerfail: false,
             logged_in: false,
         },
@@ -559,13 +577,20 @@
                         },
                         success: function () {
                             this.logged_in = true;
-                            this.loginfail = false;
+                            this.login_input_fail = false;
+                            this.login_fail = false;
+                            this.getId();
                             this.getQs();
                             $('#loginModal').modal('toggle');
-                        }.bind(this)
+                        }.bind(this),
+                        complete:function(xhr){
+                            if(xhr.status == 401) {
+                                app.login_fail = true;
+                            }
+                        }
                     });
                 } else {
-                    this.loginfail = true;
+                    this.login_input_fail = true;
                 }
             },
             register: function () {
@@ -578,15 +603,37 @@
                         contentType: 'application/json;charset=UTF-8',
                         success: function () {
                             this.logged_in = true;
-                            this.loginfail = false;
-                            this.getQs();
-                            $('#loginModal').modal('toggle');
-                        }.bind(this)
+                            this.login_input_fail = false;
+                            this.login_input_fail = false;
+                            this.register_fail = false;
+                            this.login();
+                        }.bind(this),
+                        complete:function(xhr){
+                            if(xhr.status === 409) {
+                                app.register_fail = true;
+                            }
+                        }
                     });
 
                 } else {
-                    this.loginfail = true;
+                    this.login_input_fail = true;
                 }
+            },
+            getId: function () {
+                $.ajax({
+                    url:'http://localhost:8080/user',
+                    type:'GET',
+                    dataType:'json',
+                    xhrFields:{withCredentials:true},
+                    success:function(res){
+                        app.userDTO= res;
+                    },
+                    complete:function(xhr){
+                        if(xhr.status === 404) {
+                            alert("möööp server kaputt")
+                        }
+                    }
+                });
             },
             logout: function () {
 
@@ -619,8 +666,24 @@
                 });
             },
             getQsIAnswered: function () {
-                $.getJSON('http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions', function (res) {
-                    app.qs_i_answered = res;
+                $.ajax({
+                    url:'http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions',
+                    type:'GET',
+                    dataType:'json',
+                    xhrFields:{withCredentials:true},
+                    success:function(res){
+                        app.qs_i_answered = res;
+                    },
+                    complete:function(xhr){
+                        if(xhr.status >= 400) {
+                            alert("mööp anfragenfehler");
+                        } else {
+                            if(xhr.status >= 500) {
+                                alert("mööp server kaputt")
+                            }
+                        }
+
+                    }
                 });
             },
             getUnsolvedQs: function () {
@@ -643,22 +706,21 @@
                     alert("Title: " + this.newQuestion.title
                         + "\nText: " + this.newQuestion.text
                         + "\nUserID: " + this.userDTO.id)
-                    /*$.ajax({
-                     url: 'http://localhost:8080/todos',
-                     type: 'PUT',
+                    $.ajax({
+                     url: 'http://localhost:8080/questions',
+                     type: 'POST',
                      xhrFields: {withCredentials: true},
-                     data: JSON.stringify({content: this.newTodo}),
+                     data: JSON.stringify(this.newQuestion),
                      contentType: 'application/json',
                      success: function () {
-                     app.newTodo = '';
-                     app.getTodos();
-                     $('#loginModal').modal('toggle');
-                     }
-                     });*/
-                    $('#newQModal').modal('toggle');
-                    this.newtitlefail = false;
-                    this.newtextfail = false;
-                    this.discardQ();
+                         this.newtitlefail = false;
+                         this.newtextfail = false;
+                         this.discardQ();
+                         this.getQs();
+                         $('#newQModal').modal('toggle');
+                     }.bind(this),
+                     });
+
                 } else {
                     if (this.newQuestion.title == "") {
                         this.newtitlefail = true;

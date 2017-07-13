@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import qasystem.application.service.UserService;
 import qasystem.web.dtos.AnswerDTO;
 import qasystem.web.dtos.QuestionDTO;
+import qasystem.web.dtos.UserDTO;
 
 import java.util.List;
 
@@ -21,6 +22,16 @@ public class UserController {
     @Autowired
     public UserController(UserService userService){
         this.userService = userService;
+    }
+
+    /**
+     * Sucht die Id des angemeldeten Benutzers und gibt diese zurück.
+     *
+     * @return UserDTO mit der Id und dem Benutzernamen des angemeldeten Nutzers.
+     */
+    @GetMapping()
+    public UserDTO getIdFromUser(@AuthenticationPrincipal User user){
+        return userService.getIdFromUser(user);
     }
 
     /**
