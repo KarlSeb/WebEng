@@ -7,6 +7,7 @@ import qasystem.persistence.entities.User;
 import qasystem.persistence.repositories.UserRepository;
 import qasystem.web.dtos.AnswerDTO;
 import qasystem.web.dtos.QuestionDTO;
+import qasystem.web.dtos.UserDTO;
 
 import java.util.List;
 
@@ -18,6 +19,15 @@ public class UserService {
     private QuestionService questionService;
     @Autowired
     private AnswerService answerService;
+
+    /**
+     * Konvertiert den Spring-User in eine User-Entity und konvertiert diesen in ein DTO.
+     *
+     * @return UserDTO mit der Id und dem Benutzernamen des angemeldeten Nutzers.
+     */
+    public UserDTO getIdFromUser(org.springframework.security.core.userdetails.User user) {
+        return convertUserToDTO(getUserByAuthenticationPrinciple(user));
+    }
 
     /**
      * Holt den Benutzer mit der entsprechenden ID aus der Datenbank und gibt diesen zurück.
@@ -68,7 +78,8 @@ public class UserService {
 
     User getUserByAuthenticationPrinciple(org.springframework.security.core.userdetails.User user) {
         User foundUser = userRepository.findByUsername(user.getUsername());
-        if(foundUser != null && foundUser.getPassword().equals(user.getPassword()))
+        //TODO Passwortüberprüfung auskommentiert, da im Spring-User kein Passwort enhalten ist.
+        if(foundUser != null /*&& foundUser.getPassword().equals(user.getPassword())*/)
             return foundUser;
         else
             throw new SecurityException("User that tried to take this action was not found in Database.");
@@ -78,5 +89,12 @@ public class UserService {
         User foundUser = getUserByAuthenticationPrinciple(user);
         if (foundUser.getId() != Long.parseLong(id))
             throw new SecurityException("This User is not allowed to take that action.");
+    }
+
+    private UserDTO convertUserToDTO(User user) {
+        UserDTO newDTO = new UserDTO();
+        newDTO.setUserName(user.getUsername());
+        newDTO.setId(user.getId());
+        return newDTO;
     }
 }
