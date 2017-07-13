@@ -533,9 +533,9 @@
                 date: ''
             },
             userDTO: {
-                id: '1',
-                userName: '',
-                password: ''
+                id: '8',
+                userName: 'bob',
+                password: 'bobspw'
             },
 
             login_input_fail: false,
@@ -571,11 +571,12 @@
                             this.logged_in = true;
                             this.login_input_fail = false;
                             this.login_fail = false;
+                            this.getId();
                             this.getQs();
                             $('#loginModal').modal('toggle');
                         }.bind(this),
                         complete:function(xhr){
-                            if(xhr.status === 401) {
+                            if(xhr.status == 401) {
                                 app.login_fail = true;
                             }
                         }
@@ -595,9 +596,9 @@
                         success: function () {
                             this.logged_in = true;
                             this.login_input_fail = false;
+                            this.login_input_fail = false;
                             this.register_fail = false;
-                            this.getQs();
-                            $('#loginModal').modal('toggle');
+                            this.login();
                         }.bind(this),
                         complete:function(xhr){
                             if(xhr.status === 409) {
@@ -609,6 +610,22 @@
                 } else {
                     this.login_input_fail = true;
                 }
+            },
+            getId: function () {
+                $.ajax({
+                    url:'http://localhost:8080/user',
+                    type:'GET',
+                    dataType:'json',
+                    xhrFields:{withCredentials:true},
+                    success:function(res){
+                        app.userDTO= res;
+                    },
+                    complete:function(xhr){
+                        if(xhr.status === 404) {
+                            alert("möööp server kaputt")
+                        }
+                    }
+                });
             },
             logout: function () {
 
@@ -641,20 +658,25 @@
                 });
             },
             getQsIAnswered: function () {
-                $.getJSON('http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions',function (res) {
-                    app.qs_i_answered = res;
-                });
-               /* $.ajax({
+                $.ajax({
                     url:'http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions',
                     type:'GET',
                     dataType:'json',
                     xhrFields:{withCredentials:true},
                     success:function(res){
                         app.qs_i_answered = res;
-                        app.newTodo = '';
-                        app.getTodos();
+                    },
+                    complete:function(xhr){
+                        if(xhr.status >= 400) {
+                            alert("mööp anfragenfehler");
+                        } else {
+                            if(xhr.status >= 500) {
+                                alert("mööp server kaputt")
+                            }
+                        }
+
                     }
-                });*/
+                });
             },
             getUnsolvedQs: function () {
                 $.getJSON('http://localhost:8080/questions/unsolved', function (res) {
@@ -676,22 +698,21 @@
                     alert("Title: " + this.newQuestion.title
                         + "\nText: " + this.newQuestion.text
                         + "\nUserID: " + this.userDTO.id)
-                    /*$.ajax({
-                     url: 'http://localhost:8080/todos',
-                     type: 'PUT',
+                    $.ajax({
+                     url: 'http://localhost:8080/questions',
+                     type: 'POST',
                      xhrFields: {withCredentials: true},
-                     data: JSON.stringify({content: this.newTodo}),
+                     data: JSON.stringify({content: this.newQuestion}),
                      contentType: 'application/json',
                      success: function () {
-                     app.newTodo = '';
-                     app.getTodos();
-                     $('#loginModal').modal('toggle');
+                         this.newtitlefail = false;
+                         this.newtextfail = false;
+                         this.discardQ();
+                         this.getQs();
+                         $('#newQModal').modal('toggle');
                      }
-                     });*/
-                    $('#newQModal').modal('toggle');
-                    this.newtitlefail = false;
-                    this.newtextfail = false;
-                    this.discardQ();
+                     });
+
                 } else {
                     if (this.newQuestion.title == "") {
                         this.newtitlefail = true;
