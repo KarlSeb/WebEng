@@ -350,10 +350,12 @@
     });
 
     Vue.filter('truncate', function (string, value) {
-        if (string.length < value) {
-            return string
-        } else {
-            return string.substring(0, value) + '...';
+        if (string != null) {
+            if (string.length < value) {
+                return string
+            } else {
+                return string.substring(0, value) + '...';
+            }
         }
     });
 
@@ -515,8 +517,14 @@
             unsolved_questions: [],
             qs_i_answered: [],
             newQuestion: {
+                id:'',
                 title: '',
-                text: ''
+                text: '',
+                date:'',
+                answered:'',
+                userId:'',
+                userName:'',
+                answerCount:''
             },
             newAnswer: {
                 parentQuestionId: '',
@@ -702,7 +710,7 @@
                      url: 'http://localhost:8080/questions',
                      type: 'POST',
                      xhrFields: {withCredentials: true},
-                     data: JSON.stringify({content: this.newQuestion}),
+                     data: JSON.stringify(this.newQuestion),
                      contentType: 'application/json',
                      success: function () {
                          this.newtitlefail = false;
@@ -710,7 +718,7 @@
                          this.discardQ();
                          this.getQs();
                          $('#newQModal').modal('toggle');
-                     }
+                     }.bind(this),
                      });
 
                 } else {
