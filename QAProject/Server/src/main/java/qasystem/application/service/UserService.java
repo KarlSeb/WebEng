@@ -78,8 +78,7 @@ public class UserService {
 
     User getUserByAuthenticationPrinciple(org.springframework.security.core.userdetails.User user) {
         User foundUser = userRepository.findByUsername(user.getUsername());
-        //TODO Passwortüberprüfung auskommentiert, da im Spring-User kein Passwort enhalten ist.
-        if(foundUser != null /*&& foundUser.getPassword().equals(user.getPassword())*/)
+        if(foundUser != null)
             return foundUser;
         else
             throw new SecurityException("User that tried to take this action was not found in Database.");
