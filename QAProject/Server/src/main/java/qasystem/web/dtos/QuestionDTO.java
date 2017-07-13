@@ -25,8 +25,6 @@ public class QuestionDTO {
 
     private boolean answered;
 
-    @NotNull
-    @NotEmpty
     private long userId;
 
     private String userName;
