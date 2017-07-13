@@ -80,11 +80,15 @@
                         <h4 class="modal-title">Login</h4>
                     </div>
                     <div class="modal-body">
-                        <div class="alert alert-danger" role="alert" v-show="loginfail">Alle Felder müssen befüllt
+                        <div class="alert alert-danger" role="alert" v-show="login_input_fail">Alle Felder müssen befüllt
                             sein!
                         </div>
-                        <input type="text" v-model="userDTO.userName" placeholder="Nutzername"/>
-                        <input type="password" v-model="userDTO.password" placeholder="Passwort"/>
+                        <div class="alert alert-danger" role="alert" v-show="register_fail">Der Name ist bereits vergeben!
+                        </div>
+                        <div class="alert alert-danger" role="alert" v-show="login_fail">Nutzername oder Passwort sind falsch!
+                        </div>
+                        <input type="text" v-model="userDTO.userName" placeholder="Nutzername" maxlength="15"/>
+                        <input type="password" v-model="userDTO.password" placeholder="Passwort" maxlength="15"/>
 
                     </div>
                     <div class="modal-footer">
@@ -114,8 +118,9 @@
                         <div class="panel panel-default">
                             <div class="panel-heading">Q-Titel</div>
                             <div class="panel-body">
-                                <input type="text" class="form-control" placeholder="Title" v-model="newQuestion.title"
-                                       aria-describedby="sizing-addon1">
+                                 <textarea class="form-control" placeholder="Title" v-model="newQuestion.title"
+                                       aria-describedby="sizing-addon1" maxlength="200">
+                                      </textarea>
                             </div>
                         </div>
                         <div class="alert alert-danger" role="alert" v-show="newtextfail">Alle Felder müssen befüllt
@@ -151,7 +156,9 @@
                         <div class="panel-heading">
                             <div class="row">
                                 <div class="col-md-8">
-                                    <h2>{{currentQuestion.title}}</h2>
+                                    <span style="word-wrap: break-word;">
+                                        <h2>{{currentQuestion.title}}</h2>
+                                    </span>
                                     <h5><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{currentQuestion.user_name}}</h5>
                                 </div>
 
@@ -183,7 +190,9 @@
                             </div>
                         </div>
                         <div class="panel-body">
-                            {{currentQuestion.text}}
+                            <span style="word-wrap: break-word;">
+                                {{currentQuestion.text}}
+                            </span>
                         </div>
                     </div>
                     <div class="modal-body">
@@ -529,10 +538,11 @@
                 password: ''
             },
 
-            loginfail: false,
+            login_input_fail: false,
+            register_fail: false,
+            login_fail: false,
             newtitlefail: false,
             newtextfail: false,
-            registerfail: false,
             newanswerfail: false,
             logged_in: false,
         },
@@ -559,13 +569,19 @@
                         },
                         success: function () {
                             this.logged_in = true;
-                            this.loginfail = false;
+                            this.login_input_fail = false;
+                            this.login_fail = false;
                             this.getQs();
                             $('#loginModal').modal('toggle');
-                        }.bind(this)
+                        }.bind(this),
+                        complete:function(xhr){
+                            if(xhr.status === 401) {
+                                app.login_fail = true;
+                            }
+                        }
                     });
                 } else {
-                    this.loginfail = true;
+                    this.login_input_fail = true;
                 }
             },
             register: function () {
@@ -578,14 +594,20 @@
                         contentType: 'application/json;charset=UTF-8',
                         success: function () {
                             this.logged_in = true;
-                            this.loginfail = false;
+                            this.login_input_fail = false;
+                            this.register_fail = false;
                             this.getQs();
                             $('#loginModal').modal('toggle');
-                        }.bind(this)
+                        }.bind(this),
+                        complete:function(xhr){
+                            if(xhr.status === 409) {
+                                app.register_fail = true;
+                            }
+                        }
                     });
 
                 } else {
-                    this.loginfail = true;
+                    this.login_input_fail = true;
                 }
             },
             logout: function () {
@@ -619,9 +641,20 @@
                 });
             },
             getQsIAnswered: function () {
-                $.getJSON('http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions', function (res) {
+                $.getJSON('http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions',function (res) {
                     app.qs_i_answered = res;
                 });
+               /* $.ajax({
+                    url:'http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions',
+                    type:'GET',
+                    dataType:'json',
+                    xhrFields:{withCredentials:true},
+                    success:function(res){
+                        app.qs_i_answered = res;
+                        app.newTodo = '';
+                        app.getTodos();
+                    }
+                });*/
             },
             getUnsolvedQs: function () {
                 $.getJSON('http://localhost:8080/questions/unsolved', function (res) {
