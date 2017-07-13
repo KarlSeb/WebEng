@@ -226,7 +226,7 @@
                     </div>
                     <div class="modal-footer">
                         <div class="btn-group" role="group" v-if="showQuestionControl()">
-                            <button  type="button" class="btn btn-danger"  @click="remove_question(currentQuestion)">DELETE Q</button>
+                            <button  type="button" class="btn btn-danger"  @click="remove_question()">DELETE Q</button>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                         <div v-if="!showQuestionControl()">
@@ -482,26 +482,10 @@
                 return (this.user_id == app.userDTO.id) && app.logged_in
             },
             remove_answer: function (answer) {
-                /*$.ajax({
-                 url: 'http://localhost:8080/todos/' + todo.pid,
-                 type: 'DELETE',
-                 xhrFields: {withCredentials: true},
-                 success: function () {
-                 this.$emit('removedquestion');
-                 }.bind(this)
-                 });*/
-                alert("remove answer with ID"+answer.id)
+                app.remove_answer(answer);
             },
             accept_answer: function (answer) {
-                /*$.ajax({
-                 url: 'http://localhost:8080/todos/' + todo.pid,
-                 type: 'DELETE',
-                 xhrFields: {withCredentials: true},
-                 success: function () {
-                 this.$emit('removedquestion');
-                 }.bind(this)
-                 });*/
-                alert("accept answer with ID"+answer.id)
+                app.accept_answer(answer);
             },
             showQuestionControlA: function () {
                 return (app.currentQuestion.user_id == app.userDTO.id) && app.logged_in
@@ -580,7 +564,6 @@
                             this.login_input_fail = false;
                             this.login_fail = false;
                             this.getId();
-                            this.getQs();
                             $('#loginModal').modal('toggle');
                         }.bind(this),
                         complete:function(xhr){
@@ -627,6 +610,7 @@
                     xhrFields:{withCredentials:true},
                     success:function(res){
                         app.userDTO= res;
+                        app.getQs();
                     },
                     complete:function(xhr){
                         if(xhr.status === 404) {
@@ -703,9 +687,6 @@
             
             addQ: function () {
                 if (this.newQuestion.title != "" && this.newQuestion.text != "") {
-                    alert("Title: " + this.newQuestion.title
-                        + "\nText: " + this.newQuestion.text
-                        + "\nUserID: " + this.userDTO.id)
                     $.ajax({
                      url: 'http://localhost:8080/questions',
                      type: 'POST',
@@ -730,20 +711,19 @@
                     }
                 }
             },
-            remove_question: function (question) {
-                /*$.ajax({
-                 url: 'http://localhost:8080/todos/' + todo.pid,
-                 type: 'DELETE',
-                 xhrFields: {withCredentials: true},
-                 success: function () {
-                 this.$emit('removedquestion');
-                 }.bind(this)
-                 });*/
-                alert("remove question with ID"+question.id)
+            remove_question: function () {
+                $.ajax({
+                    url: 'http://localhost:8080/questions/'+this.currentQuestion.id,
+                    type: 'DELETE',
+                    xhrFields: {withCredentials: true},
+                    success: function () {
+                        $('#qModal').modal('toggle');
+                        app.getQs();
+                    }.bind(this),
+                });
             },
             add_answer: function () {
                 if (this.newAnswer.text != "") {
-                    alert("add answer with text: "+this.newAnswer.text);
                     $.ajax({
                         url: 'http://localhost:8080/questions/'+ this.currentQuestion.id+"/answers",
                         type: 'POST',
@@ -762,8 +742,27 @@
                 }
 
             },
-            remove_answer: function () {
-                
+            remove_answer: function (answer) {
+                $.ajax({
+                    url: 'http://localhost:8080/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
+                    type: 'DELETE',
+                    xhrFields: {withCredentials: true},
+                    success: function () {
+                        app.getQs();
+                        app.getAsToQ(this.currentQuestion.id);
+                    }.bind(this),
+                });
+            },
+            accept_answer: function (answer) {
+                $.ajax({
+                    url: 'http://localhost:8080/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
+                    type: 'PUT',
+                    xhrFields: {withCredentials: true},
+                    success: function () {
+                        app.getQs();
+                        app.getAsToQ(this.currentQuestion.id);
+                    }.bind(this),
+                });
             }
 
 
