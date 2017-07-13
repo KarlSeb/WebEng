@@ -117,7 +117,7 @@ public class QuestionController {
      * @param id Eindeutiger Identifikator für die Frage
      * @param user Benutzer, der die Antwort löschen will
      */
-    @DeleteMapping (value = "/{id:[1-9]+}}")
+    @DeleteMapping (value = "/{id:[1-9]+}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteQuestion(@PathVariable("id") String id, @AuthenticationPrincipal User user){
         questionService.deleteQuestion(id, user);
