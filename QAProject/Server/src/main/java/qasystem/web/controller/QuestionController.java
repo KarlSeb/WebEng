@@ -64,7 +64,7 @@ public class QuestionController {
      *
      * @return Liste aller im System vorhandenen Antworten für die Frage in DTOs gekapselt.
      */
-    @GetMapping(value = "/{id:[1-9]+}/answers")
+    @GetMapping(value = "/{id:[0-9]+}/answers")
     public List<AnswerDTO> getAllAnswersByQuestionId(@PathVariable("id") String id){
         return answerService.getAllAnswersByQuestionId(id);
     }
@@ -77,7 +77,7 @@ public class QuestionController {
      * @param id Eindeutiger Identifikator für die beantwortete Frage
      * @return Die Antwort als DTO
      */
-    @PostMapping(value = "/{id:[1-9]+}/answers")
+    @PostMapping(value = "/{id:[0-9]+}/answers")
     @ResponseStatus(HttpStatus.CREATED)
     public AnswerDTO answerQuestion(@PathVariable("id") String id, @Valid @RequestBody AnswerDTO answer,  @AuthenticationPrincipal User user){
         return answerService.answerQuestion(id, answer, user);
@@ -102,7 +102,7 @@ public class QuestionController {
      * @param id Eindeutige Id zum identifizieren der Frage
      * @param aId Eindeutige Id zum identifizieren der Antwort
      */
-    @PutMapping(value = "/{id:[1-9]+}/answers/{aId:[1-9]+}")
+    @PutMapping(value = "/{id:[0-9]+}/answers/{aId:[0-9]+}")
     @ResponseStatus(HttpStatus.OK)
     public void acceptAnswer(@PathVariable("id") String id, @PathVariable("aId") String aId, @AuthenticationPrincipal User user){
         answerService.acceptAnswer(id, aId, user);
@@ -117,7 +117,7 @@ public class QuestionController {
      * @param id Eindeutiger Identifikator für die Frage
      * @param user Benutzer, der die Antwort löschen will
      */
-    @DeleteMapping (value = "/{id:[1-9]+}")
+    @DeleteMapping (value = "/{id:[0-9]+}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteQuestion(@PathVariable("id") String id, @AuthenticationPrincipal User user){
         questionService.deleteQuestion(id, user);
@@ -130,7 +130,7 @@ public class QuestionController {
      * @param aId Eindeutiger Identifikator für die Antwort
      * @param user Benutzer, der die Antwort löschen will
      */
-    @DeleteMapping (value = "/{id:[1-9]+}/answers/{aId:[1-9]+}")
+    @DeleteMapping (value = "/{id:[0-9]+}/answers/{aId:[0-9]+}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteAnswer(@PathVariable("id") String id, @PathVariable("aId") String aId, @AuthenticationPrincipal User user){
         answerService.deleteAnswer(id, aId, user);
