@@ -10,7 +10,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import qasystem.QAProjectApplication;
-import qasystem.application.service.QuestionService;
 import qasystem.persistence.entities.Answer;
 import qasystem.persistence.entities.Question;
 import qasystem.persistence.entities.Role;
@@ -19,8 +18,7 @@ import qasystem.persistence.repositories.AnswerRepository;
 import qasystem.persistence.repositories.QuestionRepository;
 import qasystem.persistence.repositories.RoleRepository;
 import qasystem.persistence.repositories.UserRepository;
-import qasystem.web.controller.GenericController;
-import qasystem.web.controller.QuestionController;
+
 
 import java.util.HashSet;
 
@@ -35,24 +33,18 @@ public class TestDataInit implements CommandLineRunner{
     private final QuestionRepository qrepo;
     private final AnswerRepository arepo;
     private final RoleRepository rrepo;
-    private final GenericController genericController;
-    private final QuestionController questionController;
     private static final Logger log = LoggerFactory.getLogger(QAProjectApplication.class);
     private final Environment env;
-    private final QuestionService questionService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public TestDataInit(UserRepository urepo, GenericController genericController, QuestionRepository qrepo,
-                        AnswerRepository arepo, Environment env, QuestionController questionController, QuestionService questionService,
+    public TestDataInit(UserRepository urepo, QuestionRepository qrepo,
+                        AnswerRepository arepo, Environment env,
                         PasswordEncoder passwordencoder, RoleRepository rrepo) {
         this.urepo = urepo;
-        this.genericController = genericController;
         this.qrepo = qrepo;
         this.arepo = arepo;
         this.env = env;
-        this.questionController = questionController;
-        this.questionService = questionService;
         this.passwordEncoder = passwordencoder;
         this.rrepo = rrepo;
     }

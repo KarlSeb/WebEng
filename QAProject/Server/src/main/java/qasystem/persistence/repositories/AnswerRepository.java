@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import qasystem.persistence.entities.Answer;
-import qasystem.persistence.entities.Question;
 
 import java.util.Collection;
 

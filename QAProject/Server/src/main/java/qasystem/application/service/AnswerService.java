@@ -1,6 +1,5 @@
 package qasystem.application.service;
 
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,6 @@ import org.springframework.security.core.userdetails.User;
 import qasystem.persistence.repositories.AnswerRepository;
 import qasystem.web.dtos.AnswerDTO;
 
-import java.security.acl.NotOwnerException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.GregorianCalendar;

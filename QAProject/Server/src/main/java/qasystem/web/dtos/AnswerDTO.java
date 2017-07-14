@@ -1,10 +1,5 @@
 package qasystem.web.dtos;
 
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.persistence.Column;
-import javax.persistence.Lob;
-import javax.validation.constraints.NotNull;
 
 /**
  * Kapselt die Daten für eine Antwort.
