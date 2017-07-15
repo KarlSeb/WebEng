@@ -108,6 +108,20 @@ public class QuestionController {
         answerService.acceptAnswer(id, aId, user);
     }
 
+    /**
+     * Identifiziert die entsprechende Antwort über die eindeutige aId für die Antwort und setzt das entsprechende Flag.
+     * Setzt außerdem die Frage, die über die Id  identifiziert wird, auf unbeantwortet,
+     * falls diese keine weitere akzeptierte Antwort besitzt.
+     *
+     * @param id Eindeutige Id zum identifizieren der Frage
+     * @param aId Eindeutige Id zum identifizieren der Antwort
+     */
+    @PutMapping(value = "/{id:[0-9]+}/answers/{aId:[0-9]+}/unaccept")
+    @ResponseStatus(HttpStatus.OK)
+    public void unacceptAnswer(@PathVariable("id") String id, @PathVariable("aId") String aId, @AuthenticationPrincipal User user){
+        answerService.unacceptAnswer(id, aId, user);
+    }
+
     //=======DELETE-MAPPING=======
 
     /**

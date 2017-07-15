@@ -76,6 +76,29 @@ public class AnswerService {
     }
 
     /**
+     * Updated die entsprechenden Datenbankeinträge der angegebenen Antwort und der zugehörigen Frage, indem das Flag
+     * zum akzeptieren bzw. beantworrten auf true gesetzt wird-
+     *
+     * @param id Eindeutiger Identifikator der Frage
+     * @param aId EIndeutiger Identifikator der Antwort
+     * @param user Der User, der die Antwort akzeptieren will
+     */
+    @Secured("ROLE_USER")
+    public void unacceptAnswer(String id, String aId, User user) {
+        if(id == null||aId == null){
+            throw new IllegalArgumentException("The Ids cannot be null! Given QuestionId: "+id+", given AnswerId: "+aId);
+        }
+        questionService.authenticateUserForQuestion(id, user);
+        questionService.setQuestionToAnswered(id, false);
+        Long lAnswerId = Long.parseLong(aId);
+        answerRepository.updateAccepted(lAnswerId, false);
+        Question question = questionService.getQuestionById(id);
+        for (Answer a: question.getAnswers()) {
+            if (a.isAccepted()) questionService.setQuestionToAnswered(id, true);
+        }
+    }
+
+    /**
      * Überprüft ob der übergebene Benutzer die Antwort erstellt hat. Falls dies der Fall ist wir die Antwort aus der
      * Datenbank gelöscht
      *
