@@ -61,8 +61,8 @@ public class QuestionService {
      * @return Die Frage als DTO
      */
     @Secured("ROLE_USER")
-    public QuestionDTO createQuestion(QuestionDTO newQuestion, User user ) {
-        if(newQuestion==null){
+    public QuestionDTO createQuestion(QuestionDTO newQuestion, User user) {
+        if (newQuestion == null) {
             throw new IllegalArgumentException("Given Question was null");
         }
         qasystem.persistence.entities.User foundUser = userService.getUserByAuthenticationPrinciple(user);
@@ -75,7 +75,7 @@ public class QuestionService {
      * Löscht die Frage, die durch {@code id} identifiziert wird, und alle darunter liegenden Antworten, falls der
      * User, der mittels {@code uId} identifiziert wird, der Ersteller der Frage ist.
      *
-     * @param id  Eindeutiger Identifikator für die Frage
+     * @param id   Eindeutiger Identifikator für die Frage
      * @param user Benutzer, der die Frage löschen möchte
      */
     @Secured("ROLE_USER")
@@ -158,11 +158,27 @@ public class QuestionService {
      *                 False, falls die Frage noch zu benatworten ist.
      */
     void setQuestionToAnswered(String id, boolean answered) {
-        if(id==null){
+        if (id == null) {
             throw new IllegalArgumentException("Given QuestionId was null!");
         }
         Long lQuestionId = Long.parseLong(id);
-        questionRepository.updateAnswered(lQuestionId, answered);
+        if (answered) {
+            questionRepository.updateAnswered(lQuestionId, answered);
+        } else {
+            boolean stayAnswered = false;
+            int count = 0;
+            Question q = questionRepository.getOne(lQuestionId);
+            for (Answer a : q.getAnswers()) {
+                if (a.isAccepted()) {
+                    count++;
+                }
+                if (count == 2) {
+                    stayAnswered = true;
+                    break;
+                }
+            }
+            questionRepository.updateAnswered(lQuestionId, stayAnswered);
+        }
     }
 
     /**
@@ -172,7 +188,7 @@ public class QuestionService {
      * @return Die Frage mit der entsprechenden Id
      */
     Question getQuestionById(String id) {
-        if (id== null){
+        if (id == null) {
             throw new IllegalArgumentException("Given QuestionId was null");
         }
         Long lQuestionId = Long.parseLong(id);
@@ -186,7 +202,7 @@ public class QuestionService {
      * @return Alle Fragen, die der Benutzer gestellt hat
      */
     Collection<Question> findAllByUserId(String id) {
-        if (id== null){
+        if (id == null) {
             throw new IllegalArgumentException("Given UserId was null");
         }
         Long lUserId = Long.parseLong(id);
@@ -200,7 +216,7 @@ public class QuestionService {
      * @return Liste aller Fragen, auf die der Benutzer mit {@code id} geantwortet hat.
      */
     List<QuestionDTO> findAllQuestionsByAnswerContainsUserId(String id) {
-        if (id== null){
+        if (id == null) {
             throw new IllegalArgumentException("Given UserId was null");
         }
         Long lUserId = Long.parseLong(id);
@@ -220,7 +236,7 @@ public class QuestionService {
         if (!allowed) throw new SecurityException("This User is not allowed to take that action.");
     }
 
-    private static String format(GregorianCalendar calendar){
+    private static String format(GregorianCalendar calendar) {
         SimpleDateFormat fmt = new SimpleDateFormat("dd.MM.yyyy hh:mm:ss");
         fmt.setCalendar(calendar);
         String dateFormatted = fmt.format(calendar.getTime());
