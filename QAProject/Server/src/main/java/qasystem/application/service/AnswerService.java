@@ -91,11 +91,11 @@ public class AnswerService {
         questionService.authenticateUserForQuestion(id, user);
         questionService.setQuestionToAnswered(id, false);
         Long lAnswerId = Long.parseLong(aId);
-        answerRepository.updateAccepted(lAnswerId, false);
         Question question = questionService.getQuestionById(id);
         for (Answer a: question.getAnswers()) {
-            if (a.isAccepted()) questionService.setQuestionToAnswered(id, true);
+            if (a.isAccepted()) questionService.setQuestionToAnswered(id, false);
         }
+        answerRepository.updateAccepted(lAnswerId, false);
     }
 
     /**

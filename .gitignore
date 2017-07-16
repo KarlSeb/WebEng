@@ -56,3 +56,7 @@ QAProject/Server/Server.iml.rej
 .idea/modules.xml
 .idea/misc.xml
 .idea/WebEng.iml
+*.aux
+*.out
+*.gz
+*.toc
