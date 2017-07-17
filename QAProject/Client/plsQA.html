@@ -286,7 +286,7 @@
                 <div class="col-md-8">
                     <h2>
                         <span class="badge">{{q.answerCount}}</span>
-                        <span style="word-wrap: break-word;"> {{q.title | truncate(15)}}</span>
+                        <span style="word-wrap: break-word;"> {{q.title | truncate(25)}}</span>
                     </h2>
                     <h6><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{q.userName}}</h6>
                 </div>
@@ -318,7 +318,7 @@
         </div>
         <div class="panel-body">
             <span style="word-wrap: break-word;">
-                {{q.text | truncate(50)}}
+                {{q.text | truncate(100)}}
             </span>
         </div>
     </div>
@@ -342,7 +342,7 @@
                         <div v-if="showQuestionControlA() && !a.accepted">
                             <button  type="button" class="btn btn-success btn-block"  @click="accept_answer(a)">ACCEPT A</button>
                         </div>
-                        <div v-if="showQuestionControlA() && a.accepted && false">
+                        <div v-if="showQuestionControlA() && a.accepted">
                             <button  type="button" class="btn btn-warning btn-block"  @click="un_accept_answer(a)">UNACCEPT A</button>
                         </div>
                     </div>
@@ -461,7 +461,6 @@
             title: {required: true},
             user_id: {required: true},
             username: {required: true},
-            usern1: {default: 'helo'},
             loggedin: {default: false}
 
         },
@@ -553,9 +552,9 @@
                 date: ''
             },
             userDTO: {
-                id: '8',
-                userName: 'bob',
-                password: 'bobspw'
+                id: '-1',
+                userName: '',
+                password: ''
             },
 
             login_input_fail: false,
@@ -648,14 +647,9 @@
                 });
             },
             logout: function () {
-                this.delete_cookie("JSESSIONID");
                 this.logged_in = false;
                 this.userDTO.password = '';
                 this.userDTO.userName = '';
-            },
-            delete_cookie: function ( name ) {
-                alert("delet cookie:"+ name);
-                document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
             },
 
             getQs: function () {
@@ -687,10 +681,10 @@
                     },
                     complete:function(xhr){
                         if(xhr.status >= 400) {
-                            alert("mööp anfragenfehler");
+                            alert("anfragenfehler");
                         } else {
                             if(xhr.status >= 500) {
-                                alert("mööp server kaputt")
+                                alert("serverfehler")
                             }
                         }
 
