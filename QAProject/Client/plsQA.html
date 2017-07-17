@@ -523,6 +523,7 @@
     var app = new Vue({
         el: '#app',
         data: {
+            server_adress: 'http://localhost:8080',
             all_questions: [],
             unanswered_questions: [],
             unsolved_questions: [],
@@ -579,7 +580,7 @@
             login: function () {
                 if (this.userDTO.userName != "" && this.userDTO.password != "") {
                     $.ajax({
-                        url: 'http://localhost:8080/questions/all',
+                        url: app.server_adress + '/questions/all',
                         type: 'HEAD',
                         xhrFields: {withCredentials: true},
                         headers: {
@@ -606,7 +607,7 @@
             register: function () {
                 if (this.userDTO.userName != "" && this.userDTO.password != "") {
                     $.ajax({
-                        url: 'http://localhost:8080/registration',
+                        url: app.server_adress + '/registration',
                         type: 'POST',
                         xhrFields: {withCredentials: true},
                         data: JSON.stringify(this.userDTO),
@@ -631,7 +632,7 @@
             },
             getId: function () {
                 $.ajax({
-                    url:'http://localhost:8080/user',
+                    url:app.server_adress + '/user',
                     type:'GET',
                     dataType:'json',
                     xhrFields:{withCredentials:true},
@@ -661,18 +662,18 @@
                 }
             },
             getAllQs: function () {
-                $.getJSON('http://localhost:8080/questions/all', function (res) {
+                $.getJSON(this.server_adress + '/questions/all', function (res) {
                     app.all_questions = res;
                 });
             },
             getUnansweredQs: function () {
-                $.getJSON('http://localhost:8080/questions/unanswered', function (res) {
+                $.getJSON(this.server_adress + '/questions/unanswered', function (res) {
                     app.unanswered_questions = res;
                 });
             },
             getQsIAnswered: function () {
                 $.ajax({
-                    url:'http://localhost:8080/user/' + this.userDTO.id + '/answeredQuestions',
+                    url:app.server_adress + '/user/' + this.userDTO.id + '/answeredQuestions',
                     type:'GET',
                     dataType:'json',
                     xhrFields:{withCredentials:true},
@@ -692,12 +693,12 @@
                 });
             },
             getUnsolvedQs: function () {
-                $.getJSON('http://localhost:8080/questions/unsolved', function (res) {
+                $.getJSON(this.server_adress + '/questions/unsolved', function (res) {
                     app.unsolved_questions = res;
                 });
             },
             getAsToQ: function () {
-                $.getJSON('http://localhost:8080/questions/' + app.currentQuestion.id + '/answers', function (res) {
+                $.getJSON(this.server_adress + '/questions/' + app.currentQuestion.id + '/answers', function (res) {
                     app.currentQuestion.answers = res;
                 });
             },
@@ -712,7 +713,7 @@
             addQ: function () {
                 if (this.newQuestion.title != "" && this.newQuestion.text != "") {
                     $.ajax({
-                     url: 'http://localhost:8080/questions',
+                     url: app.server_adress + '/questions',
                      type: 'POST',
                      xhrFields: {withCredentials: true},
                      data: JSON.stringify(this.newQuestion),
@@ -737,7 +738,7 @@
             },
             remove_question: function () {
                 $.ajax({
-                    url: 'http://localhost:8080/questions/'+this.currentQuestion.id,
+                    url: app.server_adress + '/questions/'+this.currentQuestion.id,
                     type: 'DELETE',
                     xhrFields: {withCredentials: true},
                     success: function () {
@@ -750,7 +751,7 @@
             add_answer: function () {
                 if (this.newAnswer.text != "") {
                     $.ajax({
-                        url: 'http://localhost:8080/questions/'+ this.currentQuestion.id+"/answers",
+                        url: app.server_adress + '/questions/'+ this.currentQuestion.id+"/answers",
                         type: 'POST',
                         xhrFields: {withCredentials: true},
                         data: JSON.stringify(this.newAnswer),
@@ -769,7 +770,7 @@
             },
             remove_answer: function (answer) {
                 $.ajax({
-                    url: 'http://localhost:8080/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
+                    url: app.server_adress + '/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
                     type: 'DELETE',
                     xhrFields: {withCredentials: true},
                     success: function () {
@@ -780,7 +781,7 @@
             },
             un_accept_answer: function (answer) {
                 $.ajax({
-                    url: 'http://localhost:8080/questions/'+this.currentQuestion.id+'/answers/'+ answer.id + "/unaccept",
+                    url: app.server_adress + '/questions/'+this.currentQuestion.id+'/answers/'+ answer.id + "/unaccept",
                     type: 'PUT',
                     xhrFields: {withCredentials: true},
                     success: function () {
@@ -791,7 +792,7 @@
             },
             accept_answer: function (answer) {
                 $.ajax({
-                    url: 'http://localhost:8080/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
+                    url: app.server_adress + '/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
                     type: 'PUT',
                     xhrFields: {withCredentials: true},
                     success: function () {
