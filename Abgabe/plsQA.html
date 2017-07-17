@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>PLS QA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!--jquery cdn-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <!--bootstrap cdn-->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+
+    <!--vuejs cdn-->
+    <script src="https://unpkg.com/vue@2.1.7/dist/vue.js"></script>
+</head>
+<body style="padding-top: 70px">
+
+<div class="container">
+    <div id="app">
+
+        <tabs>
+            <tab name="All Qs" :selected="true">
+                <h1>All Qs</h1>
+                <ul>
+                    <question v-for="q in all_questions" :q="q" :id="q.id" :text="q.text" :title="q.title"
+                              :date="q.date" :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
+                              @removedquestion="getAllQs"></question>
+                </ul>
+            </tab>
+            <tab name="Unanswerd Qs">
+                <h1>Unanswerd Qs</h1>
+                <ul>
+                    <question v-for="q in unanswered_questions" :q="q" :id="q.id" :text="q.text" :title="q.title"
+                              :date="q.date" :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
+                              @removedquestion="getAllQs"></question>
+                </ul>
+            </tab>
+            <tab name="Unsolved Qs">
+                <h1>Unsolved Qs</h1>
+                <ul>
+                    <question v-for="q in unsolved_questions" :q="q" :id="q.id" :text="q.text" :title="q.title"
+                              :date="q.date" :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
+                              @removedquestion="getAllQs"></question>
+                </ul>
+            </tab>
+            <tab name="Qs i answered" :need_auth="true" v-if="logged_in">
+                <h1>Qs i answered</h1>
+                <ul>
+                    <question v-for="q in qs_i_answered" :q="q" :id="q.id" :text="q.text" :title="q.title"
+                              :date="q.date" :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
+                              @removedquestion="getAllQs"></question>
+                </ul>
+            </tab>
+            <tab name="My Qs" :need_auth="true" v-if="logged_in">
+                <h1>My Qs</h1>
+                <ul>
+                    <question v-for="q in my_qs" :q="q" :id="q.id" :text="q.text" :title="q.title" :date="q.date"
+                              :answered="q.answered" :user_id="q.user" :username="q.userName" :answer_count="q.answerCount" :loggedin="logged_in"
+                              @removedquestion="getAllQs"></question>
+                </ul>
+            </tab>
+            <tab name="Logout" :need_auth="true" v-if="logged_in">Logout
+            </tab>
+        </tabs>
+
+        <!-- Modal -->
+        <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Login</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" role="alert" v-show="login_input_fail">Alle Felder müssen befüllt
+                            sein!
+                        </div>
+                        <div class="alert alert-danger" role="alert" v-show="register_fail">Der Name ist bereits vergeben!
+                        </div>
+                        <div class="alert alert-danger" role="alert" v-show="login_fail">Nutzername oder Passwort sind falsch!
+                        </div>
+                        <input type="text" v-model="userDTO.userName" placeholder="Nutzername" maxlength="15"/>
+                        <input type="password" v-model="userDTO.password" placeholder="Passwort" maxlength="15"/>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group" role="group">
+                            <button type="submit" class="btn btn-success" @click="login">Login</button>
+                            <button type="submit" class="btn btn-primary" @click="register">Register</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="newQModal" tabindex="-1" role="dialog" aria-labelledby="newQModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">New Q</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger" role="alert" v-show="newtitlefail">Alle Felder müssen befüllt
+                            sein!
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Q-Titel</div>
+                            <div class="panel-body">
+                                 <textarea class="form-control" placeholder="Title" v-model="newQuestion.title"
+                                       aria-describedby="sizing-addon1" maxlength="200">
+                                      </textarea>
+                            </div>
+                        </div>
+                        <div class="alert alert-danger" role="alert" v-show="newtextfail">Alle Felder müssen befüllt
+                            sein!
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Q-Text</div>
+                            <div class="panel-body">
+                                <textarea class="form-control" placeholder="Question" rows="10"
+                                          v-model="newQuestion.text">
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-danger" @click="discardQ">Discard Q</button>
+                            <button type="button" class="btn btn-primary" @click="addQ">Ask Q</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade bs-example-modal-lg" id="qModal" tabindex="-1" role="dialog" aria-labelledby="newQModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <span style="word-wrap: break-word;">
+                                        <h2>{{currentQuestion.title}}</h2>
+                                    </span>
+                                    <h5><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{currentQuestion.user_name}}</h5>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>Gestellt am: </span></h6>
+
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>{{currentQuestion.date}}</h6>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6> Solved: </h6>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>
+                                                <span class="glyphicon glyphicon-ok" aria-hidden="true"
+                                                      v-show="currentQuestion.answered"></span>
+                                                <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                                                      v-show="!currentQuestion.answered"></span>
+                                            </h6>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <span style="word-wrap: break-word;">
+                                {{currentQuestion.text}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <answer v-for="a in currentQuestion.answers" :a="a" :id="a.id" :text="a.text"
+                                  :date="a.date" :accepted="a.accepted" :user_id="a.userId"
+                                  @removedquestion="getAllQs">#
+                        </answer>
+                        <div class="panel panel-default" v-if="logged_in" style="cursor: pointer">
+                            <div class="panel-heading" role="tab" id="headingNewAnswer" data-toggle="collapse" data-parent="#accordion" href="#collapseNewAnswer" aria-expanded="false" aria-controls="collapseNewAnswer">
+                                <h4 class="panel-title">
+                                        Add new A
+                                </h4>
+                            </div>
+                            <div id="collapseNewAnswer" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingNewAnswer">
+                                <div class="panel-body">
+                                    <div class="alert alert-danger" role="alert" v-show="newanswerfail">
+                                        Eine leere Antwort ist nicht erlaubt!
+                                    </div>
+                                    <textarea class="form-control" placeholder="Answer" rows="10"
+                                              v-model="newAnswer.text">
+                                </textarea>
+
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="text-right">
+                                        <button type="button" class="btn btn-primary"  @click="add_answer()">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="btn-group" role="group" v-if="showQuestionControl()">
+                            <button  type="button" class="btn btn-danger"  @click="remove_question()">DELETE Q</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                        <div v-if="!showQuestionControl()">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="x-template" id="template-tabs">
+
+    <div id="applicationContainer">
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">PLS QA</a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class=" nav navbar-nav ">
+                        <li><a href="#" data-toggle="modal" data-target="#newQModal" v-if="logged_in">newQ</a></li>
+                        <li class="nav-link" :class="{ active: menuItem.isActive}" v-for="menuItem in navItemsArray"><a
+                                :href="menuItem.href" @click="selectTabItem(menuItem)">{{ menuItem.name }}</a></li>
+                        <li><a href="#" data-toggle="modal" data-target="#loginModal" v-if="!logged_in">Login</a></li>
+                    </ul>
+                    <ul class="navbar-text navbar-right" v-if="logged_in" style="padding-right: 70px">
+                        <p>Signed in as {{userName}}</p>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div id="tabContentContainer">
+            <slot></slot>
+        </div>
+    </div>
+</script>
+
+<script type="x-template" id="template-tab">
+    <div id="individualTabContentContainer" v-if="isActive" class="jumbotron">
+        <slot></slot>
+    </div>
+</script>
+
+<template id="template-questions">
+    <div class="panel panel-default" data-toggle="modal" data-target="#qModal" @click="showQuestion()" style="cursor: pointer">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-8">
+                    <h2>
+                        <span class="badge">{{q.answerCount}}</span>
+                        <span style="word-wrap: break-word;"> {{q.title | truncate(25)}}</span>
+                    </h2>
+                    <h6><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{q.userName}}</h6>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Gestellt am: </span></h6>
+
+                        </div>
+                        <div class="col-md-6">
+                            <h6>{{q.date}}</h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6> Solved: </h6>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>
+                                <span class="glyphicon glyphicon-ok" aria-hidden="true" v-show="q.answered"></span>
+                                <span class="glyphicon glyphicon-remove" aria-hidden="true" v-show="!q.answered"></span>
+                            </h6>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <span style="word-wrap: break-word;">
+                {{q.text | truncate(100)}}
+            </span>
+        </div>
+    </div>
+</template>
+
+<template id="template-answer">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <div class="col-md-1">
+                    <h5>
+                        <span class="glyphicon glyphicon-ok" aria-hidden="true" v-show="a.accepted"></span>
+                    </h5>
+                </div>
+                <div class="col-md-4">
+                    <h5>
+                        <span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{a.userName}}
+                    </h5>
+                </div>
+                    <div class="col-md-2">
+                        <div v-if="showQuestionControlA() && !a.accepted">
+                            <button  type="button" class="btn btn-success btn-block"  @click="accept_answer(a)">ACCEPT A</button>
+                        </div>
+                        <div v-if="showQuestionControlA() && a.accepted">
+                            <button  type="button" class="btn btn-warning btn-block"  @click="un_accept_answer(a)">UNACCEPT A</button>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div v-if="showAnswerDelete()">
+                            <button  type="button" class="btn btn-danger btn-block"  @click="remove_answer(a)">DELETE A</button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <h6>
+                            <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> {{a.date}}
+                        </h6>
+                    </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            {{a.text}}
+        </div>
+    </div>
+</template>
+
+<script>
+
+    Vue.filter('uppercase', function (input) {
+        return input.toUpperCase();
+    });
+
+    Vue.filter('truncate', function (string, value) {
+        if (string != null) {
+            if (string.length < value) {
+                return string
+            } else {
+                return string.substring(0, value) + '...';
+            }
+        }
+    });
+
+
+    Vue.component('tabs', {
+        template: '#template-tabs',
+
+        data: function () {
+            return {
+                navItemsArray: [],
+                logged_in: false,
+                userName: 'test'
+            }
+        },
+        mounted: function () {
+
+            this.navItemsArray = this.$children
+
+        },
+        computed: {
+            logged_in: function () {
+                return this.$parent.logged_in
+            },
+            logout: function () {
+                return this.$parent.logout()
+            },
+            newQuestion: function () {
+                return this.$parent.newQuestion
+            },
+            userName: function () {
+                return this.$parent.userDTO.userName;
+            }
+        },
+        methods: {
+            selectTabItem(passedMenuItemObject) {
+                if (passedMenuItemObject.name == "Logout") {
+                    app.logout();
+                } else {
+                    this.navItemsArray.forEach(navItem => {navItem.isActive = (passedMenuItemObject == navItem)
+                })
+                    ;
+
+                }
+            }
+
+        }
+    });
+
+    Vue.component('tab', {
+        template: '#template-tab',
+        props: {
+            need_auth: {default: false},
+            name: {required: true},
+            selected: {default: false}
+        },
+        data: function () {
+            return {
+                isActive: false,
+                needAuth: true
+            }
+        },
+        computed: {
+            href: function () {
+                return '#' + this.name.toLowerCase().replace(/ /g, '-')
+            }
+        },
+        mounted: function () {
+            this.isActive = this.selected
+
+        },
+    });
+
+    Vue.component('question', {
+        template: '#template-questions',
+        props: {
+            q: '',
+            id: {default: -1},
+            answered: {default: false},
+            answer_count: {required: true},
+            date: {required: true},
+            text: {required: true},
+            title: {required: true},
+            user_id: {required: true},
+            username: {required: true},
+            loggedin: {default: false}
+
+        },
+        data: function () {
+            return {
+                isActive: false,
+                needAuth: true
+            }
+        },
+        methods: {
+
+            showQuestion: function () {
+                app.currentQuestion.id = this.id;
+                app.currentQuestion.title = this.title;
+                app.currentQuestion.user_name = this.username;
+                app.currentQuestion.text = this.text;
+                app.currentQuestion.user_id = this.user_id;
+                app.currentQuestion.date = this.date;
+                app.currentQuestion.answered = this.answered;
+                app.getAsToQ(this.id);
+            },
+
+            showAc: function () {
+                alert("helllo");
+                return 5
+            }
+        }
+    });
+
+    Vue.component('answer', {
+        template: '#template-answer',
+        props: {
+            a: '',
+            id: {default: -1},
+            accepted: {default: false},
+            date: {required: true},
+            text: {required: true},
+            user_id: {required: true},
+
+        },
+        methods: {
+            showAnswerDelete: function () {
+                return (this.user_id == app.userDTO.id) && app.logged_in
+            },
+            remove_answer: function (answer) {
+                app.remove_answer(answer);
+            },
+            accept_answer: function (answer) {
+                app.accept_answer(answer);
+            },
+            un_accept_answer: function (answer) {
+                app.un_accept_answer(answer);
+            },
+            showQuestionControlA: function () {
+                return (app.currentQuestion.user_id == app.userDTO.id) && app.logged_in
+            }
+        }
+    });
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            server_adress: 'http://localhost:8080',
+            all_questions: [],
+            unanswered_questions: [],
+            unsolved_questions: [],
+            qs_i_answered: [],
+            newQuestion: {
+                id:'',
+                title: '',
+                text: '',
+                date:'',
+                answered:'',
+                userId:'',
+                userName:'',
+                answerCount:''
+            },
+            newAnswer: {
+                parentQuestionId: '',
+                text: ''
+            },
+            currentQuestion: {
+                id: '',
+                title: '',
+                user_name: '',
+                text: '',
+                answered:'',
+                answers: [],
+                user_id: '',
+                date: ''
+            },
+            userDTO: {
+                id: '-1',
+                userName: '',
+                password: ''
+            },
+
+            login_input_fail: false,
+            register_fail: false,
+            login_fail: false,
+            newtitlefail: false,
+            newtextfail: false,
+            newanswerfail: false,
+            logged_in: false,
+        },
+        computed: {
+            my_qs: function () {
+                return this.all_questions.filter(function (q) {
+                    return q.user == app.userDTO.id
+                })
+            }
+        },
+        created: function () {
+            this.getQs();
+        },
+        methods: {
+            login: function () {
+                if (this.userDTO.userName != "" && this.userDTO.password != "") {
+                    $.ajax({
+                        url: app.server_adress + '/questions/all',
+                        type: 'HEAD',
+                        xhrFields: {withCredentials: true},
+                        headers: {
+                            "Authorization": "Basic " + btoa(this.userDTO.userName+ ":" +this.userDTO.password),
+                            "X-Requested-With": "XMLHttpRequest"
+                        },
+                        success: function () {
+                            this.logged_in = true;
+                            this.login_input_fail = false;
+                            this.login_fail = false;
+                            this.getId();
+                            $('#loginModal').modal('toggle');
+                        }.bind(this),
+                        complete:function(xhr){
+                            if(xhr.status == 0) {
+                                app.login_fail = true;
+                            }
+                        }
+                    });
+                } else {
+                    this.login_input_fail = true;
+                }
+            },
+            register: function () {
+                if (this.userDTO.userName != "" && this.userDTO.password != "") {
+                    $.ajax({
+                        url: app.server_adress + '/registration',
+                        type: 'POST',
+                        xhrFields: {withCredentials: true},
+                        data: JSON.stringify(this.userDTO),
+                        contentType: 'application/json;charset=UTF-8',
+                        success: function () {
+                            this.logged_in = true;
+                            this.login_input_fail = false;
+                            this.login_input_fail = false;
+                            this.register_fail = false;
+                            this.login();
+                        }.bind(this),
+                        complete:function(xhr){
+                            if(xhr.status === 409) {
+                                app.register_fail = true;
+                            }
+                        }
+                    });
+
+                } else {
+                    this.login_input_fail = true;
+                }
+            },
+            getId: function () {
+                $.ajax({
+                    url:app.server_adress + '/user',
+                    type:'GET',
+                    dataType:'json',
+                    xhrFields:{withCredentials:true},
+                    success:function(res){
+                        app.userDTO= res;
+                        app.getQs();
+                    },
+                    complete:function(xhr){
+                        if(xhr.status === 404) {
+                            alert("möööp server kaputt")
+                        }
+                    }
+                });
+            },
+            logout: function () {
+                this.logged_in = false;
+                this.userDTO.password = '';
+                this.userDTO.userName = '';
+            },
+
+            getQs: function () {
+                this.getAllQs();
+                this.getUnansweredQs();
+                this.getUnsolvedQs();
+                if (this.logged_in){
+                    this.getQsIAnswered();
+                }
+            },
+            getAllQs: function () {
+                $.getJSON(this.server_adress + '/questions/all', function (res) {
+                    app.all_questions = res;
+                });
+            },
+            getUnansweredQs: function () {
+                $.getJSON(this.server_adress + '/questions/unanswered', function (res) {
+                    app.unanswered_questions = res;
+                });
+            },
+            getQsIAnswered: function () {
+                $.ajax({
+                    url:app.server_adress + '/user/' + this.userDTO.id + '/answeredQuestions',
+                    type:'GET',
+                    dataType:'json',
+                    xhrFields:{withCredentials:true},
+                    success:function(res){
+                        app.qs_i_answered = res;
+                    },
+                    complete:function(xhr){
+                        if(xhr.status >= 400) {
+                            alert("anfragenfehler");
+                        } else {
+                            if(xhr.status >= 500) {
+                                alert("serverfehler")
+                            }
+                        }
+
+                    }
+                });
+            },
+            getUnsolvedQs: function () {
+                $.getJSON(this.server_adress + '/questions/unsolved', function (res) {
+                    app.unsolved_questions = res;
+                });
+            },
+            getAsToQ: function () {
+                $.getJSON(this.server_adress + '/questions/' + app.currentQuestion.id + '/answers', function (res) {
+                    app.currentQuestion.answers = res;
+                });
+            },
+
+            showQuestionControl: function () {
+                return (this.currentQuestion.user_id == this.userDTO.id) && this.logged_in
+            },
+            discardQ: function () {
+                this.newQuestion.text = '';
+                this.newQuestion.title = '';
+            },
+            addQ: function () {
+                if (this.newQuestion.title != "" && this.newQuestion.text != "") {
+                    $.ajax({
+                     url: app.server_adress + '/questions',
+                     type: 'POST',
+                     xhrFields: {withCredentials: true},
+                     data: JSON.stringify(this.newQuestion),
+                     contentType: 'application/json',
+                     success: function () {
+                         this.newtitlefail = false;
+                         this.newtextfail = false;
+                         this.discardQ();
+                         this.getQs();
+                         $('#newQModal').modal('toggle');
+                     }.bind(this),
+                     });
+
+                } else {
+                    if (this.newQuestion.title == "") {
+                        this.newtitlefail = true;
+                    }
+                    if (this.newQuestion.text == "") {
+                        this.newtextfail = true;
+                    }
+                }
+            },
+            remove_question: function () {
+                $.ajax({
+                    url: app.server_adress + '/questions/'+this.currentQuestion.id,
+                    type: 'DELETE',
+                    xhrFields: {withCredentials: true},
+                    success: function () {
+                        $('#qModal').modal('toggle');
+                        app.getQs();
+                    }.bind(this),
+                });
+            },
+
+            add_answer: function () {
+                if (this.newAnswer.text != "") {
+                    $.ajax({
+                        url: app.server_adress + '/questions/'+ this.currentQuestion.id+"/answers",
+                        type: 'POST',
+                        xhrFields: {withCredentials: true},
+                        data: JSON.stringify(this.newAnswer),
+                        contentType: 'application/json',
+                        success: function () {
+                            this.newanswerfail = false;
+                            this.newAnswer.text = '';
+                            this.getQs();
+                            this.getAsToQ();
+                        }.bind(this),
+                    });
+                } else {
+                    this.newanswerfail = true;
+                }
+
+            },
+            remove_answer: function (answer) {
+                $.ajax({
+                    url: app.server_adress + '/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
+                    type: 'DELETE',
+                    xhrFields: {withCredentials: true},
+                    success: function () {
+                        app.getQs();
+                        app.getAsToQ(this.currentQuestion.id);
+                    }.bind(this),
+                });
+            },
+            un_accept_answer: function (answer) {
+                $.ajax({
+                    url: app.server_adress + '/questions/'+this.currentQuestion.id+'/answers/'+ answer.id + "/unaccept",
+                    type: 'PUT',
+                    xhrFields: {withCredentials: true},
+                    success: function () {
+                        app.getQs();
+                        app.getAsToQ(this.currentQuestion.id);
+                    }.bind(this),
+                });
+            },
+            accept_answer: function (answer) {
+                $.ajax({
+                    url: app.server_adress + '/questions/'+this.currentQuestion.id+'/answers/'+ answer.id,
+                    type: 'PUT',
+                    xhrFields: {withCredentials: true},
+                    success: function () {
+                        app.getQs();
+                        app.getAsToQ(this.currentQuestion.id);
+                    }.bind(this),
+                });
+            }
+
+
+        }
+    });
+</script>
+</body>
+</html>
+
