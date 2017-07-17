@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.10.25)  17 JUL 2017 02:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2016.10.25)  17 JUL 2017 02:52
 entering extended mode
 **./Handbuch.tex
 (Handbuch.tex
@@ -974,10 +974,11 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 43.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 43.
-<Login.PNG, id=111, 1002.74625pt x 316.18124pt>
-File: Login.PNG Graphic file (type png)
- <use Login.PNG>
-Package pdftex.def Info: Login.PNG used on input line 46.
+<./Bilder/Login.PNG, id=111, 1002.74625pt x 316.18124pt>
+File: ./Bilder/Login.PNG Graphic file (type png)
+
+<use ./Bilder/Login.PNG>
+Package pdftex.def Info: ./Bilder/Login.PNG used on input line 46.
 (pdftex.def)             Requested size: 310.4979pt x 97.9042pt.
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 58.
@@ -989,15 +990,17 @@ Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 58.
  [4
 
- <./Login.PNG>]
+ <./Bilder/Login.PNG>]
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 59.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 59.
- <AlleFragen.PNG, id=125, 1129.21875pt x 539.01375pt>
-File: AlleFragen.PNG Graphic file (type png)
- <use AlleFragen.PNG>
-Package pdftex.def Info: AlleFragen.PNG used on input line 62.
+
+<./Bilder/AlleFragen.PNG, id=125, 1129.21875pt x 539.01375pt>
+File: ./Bilder/AlleFragen.PNG Graphic file (type png)
+
+<use ./Bilder/AlleFragen.PNG>
+Package pdftex.def Info: ./Bilder/AlleFragen.PNG used on input line 62.
 (pdftex.def)             Requested size: 310.4979pt x 148.20866pt.
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 75.
@@ -1007,18 +1010,17 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 75.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 75.
-
-[5 <./AlleFragen.PNG>]
+ [5 <./Bilder/AlleFragen.PNG>]
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 76.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 76.
 
-<FrageMitAntworten.PNG, id=139, 954.56625pt x 909.3975pt>
-File: FrageMitAntworten.PNG Graphic file (type png)
+<./Bilder/FrageMitAntworten.PNG, id=139, 954.56625pt x 909.3975pt>
+File: ./Bilder/FrageMitAntworten.PNG Graphic file (type png)
 
-<use FrageMitAntworten.PNG>
-Package pdftex.def Info: FrageMitAntworten.PNG used on input line 79.
+<use ./Bilder/FrageMitAntworten.PNG>
+Package pdftex.def Info: ./Bilder/FrageMitAntworten.PNG used on input line 79.
 (pdftex.def)             Requested size: 310.4979pt x 295.80046pt.
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 97.
@@ -1028,13 +1030,13 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 97.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 97.
- [6 <./FrageMitAntworten.PNG>]
-<FrageMitAntwortenUndAntwortfeld.PNG, id=158, 969.6225pt x 1068.99374pt>
-File: FrageMitAntwortenUndAntwortfeld.PNG Graphic file (type png)
-
-<use FrageMitAntwortenUndAntwortfeld.PNG>
-Package pdftex.def Info: FrageMitAntwortenUndAntwortfeld.PNG used on input line
- 101.
+ [6 <./Bilder/FrageMitAntworten.PNG>]
+<./Bilder/FrageMitAntwortenUndAntwortfeld.PNG, id=158, 969.6225pt x 1068.99374p
+t>
+File: ./Bilder/FrageMitAntwortenUndAntwortfeld.PNG Graphic file (type png)
+ <use ./Bilder/FrageMitAntwortenUndAntwortfeld.PNG>
+Package pdftex.def Info: ./Bilder/FrageMitAntwortenUndAntwortfeld.PNG used on i
+nput line 101.
 (pdftex.def)             Requested size: 310.4979pt x 342.31334pt.
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 109.
@@ -1044,15 +1046,16 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 109.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 109.
- [7 <./FrageMitAntwortenUndAntwortfeld.PNG>]
+ [7 <./Bilder/FrageMitAntwortenUndAntwortfeld.PNG>]
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 111.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 111.
- <NewQ.PNG, id=170, 742.775pt x 678.535pt>
-File: NewQ.PNG Graphic file (type png)
- <use NewQ.PNG>
-Package pdftex.def Info: NewQ.PNG used on input line 114.
+ <./Bilder/NewQ.PNG, id=170, 742.775pt x 678.535pt>
+File: ./Bilder/NewQ.PNG Graphic file (type png)
+
+<use ./Bilder/NewQ.PNG>
+Package pdftex.def Info: ./Bilder/NewQ.PNG used on input line 114.
 (pdftex.def)             Requested size: 310.4979pt x 283.64714pt.
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 126.
@@ -1062,29 +1065,31 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 126.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 126.
- [8 <./NewQ.PNG>]
+ [8 <./Bilder/NewQ.PNG>]
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 128.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 128.
- <navbar.PNG, id=183, 826.08624pt x 194.7275pt>
-File: navbar.PNG Graphic file (type png)
- <use navbar.PNG>
-Package pdftex.def Info: navbar.PNG used on input line 131.
+
+<./Bilder/navbar.PNG, id=183, 826.08624pt x 194.7275pt>
+File: ./Bilder/navbar.PNG Graphic file (type png)
+
+<use ./Bilder/navbar.PNG>
+Package pdftex.def Info: ./Bilder/navbar.PNG used on input line 131.
 (pdftex.def)             Requested size: 310.4979pt x 73.19199pt.
 
-<navbarLoggedIn.PNG, id=184, 1914.15125pt x 172.645pt>
-File: navbarLoggedIn.PNG Graphic file (type png)
+<./Bilder/navbarLoggedIn.PNG, id=184, 1914.15125pt x 172.645pt>
+File: ./Bilder/navbarLoggedIn.PNG Graphic file (type png)
 
-<use navbarLoggedIn.PNG>
-Package pdftex.def Info: navbarLoggedIn.PNG used on input line 144.
+<use ./Bilder/navbarLoggedIn.PNG>
+Package pdftex.def Info: ./Bilder/navbarLoggedIn.PNG used on input line 144.
 (pdftex.def)             Requested size: 310.4979pt x 28.0031pt.
 
-<AnsichtGalaxyS5.PNG, id=185, 371.3875pt x 462.72874pt>
-File: AnsichtGalaxyS5.PNG Graphic file (type png)
+<./Bilder/AnsichtGalaxyS5.PNG, id=185, 371.3875pt x 462.72874pt>
+File: ./Bilder/AnsichtGalaxyS5.PNG Graphic file (type png)
 
-<use AnsichtGalaxyS5.PNG>
-Package pdftex.def Info: AnsichtGalaxyS5.PNG used on input line 157.
+<use ./Bilder/AnsichtGalaxyS5.PNG>
+Package pdftex.def Info: ./Bilder/AnsichtGalaxyS5.PNG used on input line 157.
 (pdftex.def)             Requested size: 103.50105pt x 128.95595pt.
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 165.
@@ -1094,7 +1099,8 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 165.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 165.
- [9 <./navbar.PNG> <./navbarLoggedIn.PNG> <./AnsichtGalaxyS5.PNG>]
+ [9 <./Bilder/navbar.PNG> <./Bilder/navbarLoggedIn.PNG> <./Bilder/AnsichtGalaxy
+S5.PNG>]
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 165.
 Package babel Info: Redefining ngerman shorthand "~
@@ -1195,8 +1201,8 @@ Package rerunfilecheck Info: File `Handbuch.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 206.
  ) 
 Here is how much of TeX's memory you used:
- 15142 strings out of 493334
- 244104 string characters out of 3139251
+ 15143 strings out of 493334
+ 244401 string characters out of 3139251
  385247 words of memory out of 3000000
  18346 multiletter control sequences out of 15000+200000
  8588 words of font info for 31 fonts, out of 3000000 for 9000
@@ -1211,7 +1217,7 @@ onts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
 /amsfonts/cm/cmti10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmti12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmt
 t10.pfb>
-Output written on Handbuch.pdf (14 pages, 341759 bytes).
+Output written on Handbuch.pdf (14 pages, 341756 bytes).
 PDF statistics:
  275 PDF objects out of 1000 (max. 8388607)
  84 named destinations out of 1000 (max. 500000)
