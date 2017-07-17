@@ -3,9 +3,6 @@ package qasystem.web.dtos;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.GregorianCalendar;
-import java.util.LinkedList;
 
 /**
  * Kapselt die Daten für eine Frage.

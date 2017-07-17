@@ -1,6 +1,5 @@
 package qasystem.application.service;
 
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,6 @@ import org.springframework.security.core.userdetails.User;
 import qasystem.persistence.repositories.AnswerRepository;
 import qasystem.web.dtos.AnswerDTO;
 
-import java.security.acl.NotOwnerException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.GregorianCalendar;
@@ -75,6 +73,29 @@ public class AnswerService {
         questionService.setQuestionToAnswered(id, true);
         Long lAnswerId = Long.parseLong(aId);
         answerRepository.updateAccepted(lAnswerId, true);
+    }
+
+    /**
+     * Updated die entsprechenden Datenbankeinträge der angegebenen Antwort und der zugehörigen Frage, indem das Flag
+     * zum akzeptieren bzw. beantworrten auf true gesetzt wird-
+     *
+     * @param id Eindeutiger Identifikator der Frage
+     * @param aId EIndeutiger Identifikator der Antwort
+     * @param user Der User, der die Antwort akzeptieren will
+     */
+    @Secured("ROLE_USER")
+    public void unacceptAnswer(String id, String aId, User user) {
+        if(id == null||aId == null){
+            throw new IllegalArgumentException("The Ids cannot be null! Given QuestionId: "+id+", given AnswerId: "+aId);
+        }
+        questionService.authenticateUserForQuestion(id, user);
+        questionService.setQuestionToAnswered(id, false);
+        Long lAnswerId = Long.parseLong(aId);
+        Question question = questionService.getQuestionById(id);
+        for (Answer a: question.getAnswers()) {
+            if (a.isAccepted()) questionService.setQuestionToAnswered(id, false);
+        }
+        answerRepository.updateAccepted(lAnswerId, false);
     }
 
     /**

@@ -50,15 +50,6 @@ public class UserInit implements CommandLineRunner {
         admin.setRoles(adminRoles);
 
         userRepository.save(admin);
-
-        User user = new User("user",passwordEncoder.encode("pass"));
-
-        HashSet<Role> userRoles = new HashSet<>();
-        userRoles.add(userRole);
-
-        user.setRoles(userRoles);
-
-        userRepository.save(user);
     }
 }
 

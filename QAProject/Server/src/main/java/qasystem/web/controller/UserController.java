@@ -40,7 +40,7 @@ public class UserController {
      * @param id Eindeutiger Identifikator des Benutzers
      * @return Liste aller Fragen, die der Benutzer mit entsprechender {@code id}, gestellt hat.
      */
-    @GetMapping(value = "/{id:[1-9]+}/questions")
+    @GetMapping(value = "/{id:[0-9]+}/questions")
     public List<QuestionDTO> getAllQuestionsOfUser(@PathVariable("id") String id, @AuthenticationPrincipal User user){
         return userService.getAllQuestionsOfUser(id, user);
     }
@@ -51,7 +51,7 @@ public class UserController {
      * @param id Eindeutiger Identifikator des Benutzers
      * @return Liste aller Antworten, die der Benutzer mit entsprechender {@code id}, gegeben hat.
      */
-    @GetMapping(value = "/{id:[1-9]+}/answers")
+    @GetMapping(value = "/{id:[0-9]+}/answers")
     public List<AnswerDTO> getAllAnswersOfUser(@PathVariable("id") String id, @AuthenticationPrincipal User user){
         return userService.getAllAnswersOfUser(id, user);
     }
@@ -62,7 +62,7 @@ public class UserController {
      * @param id Eindeutiger Identifikator des Benutzers
      * @return Liste aller Fragen, auf die der Benutzer mit {@code id} geantwortet hat
      */
-    @GetMapping("/{id:[1-9]+}/answeredQuestions")
+    @GetMapping("/{id:[0-9]+}/answeredQuestions")
     public List<QuestionDTO> getAllQuestionsUserAnswered(@PathVariable("id") String id, @AuthenticationPrincipal User user){
         return userService.getAllQuestionsUserAnswered(id, user);
     }

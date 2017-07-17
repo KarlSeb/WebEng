@@ -13,7 +13,7 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AccessDeniedException e) throws IOException, ServletException {
-        httpServletResponse.getOutputStream().print("Method needs Admin rights");
+        httpServletResponse.getOutputStream().print("You need Admin rights to access this Page!");
         httpServletResponse.setStatus(401);
     }
 }
